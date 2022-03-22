@@ -1,11 +1,13 @@
 import json
 import sqlite3
 
+
 def parse_tel(original_value):
     new_value = 0
     if original_value != "None":
         new_value = int(original_value)
     return new_value
+
 
 """Create database (or ignore if database exists)"""
 con = sqlite3.connect('practicaSI.db')
@@ -48,7 +50,8 @@ for line in users_content['usuarios']:
     Users
     """
     cur.execute(
-        "INSERT OR IGNORE INTO users(nick, telefono, passwd, provincia, permisos,email_total, email_phising, email_click)"
+        "INSERT OR IGNORE INTO users(nick, telefono, passwd, provincia, permisos,email_total, email_phising, "
+        "email_click) "
         "VALUES ('%s','%d', '%s', '%s', '%d', '%d', '%d', '%d')" %
         (valores, parse_tel(line[valores]['telefono']), line[valores]['contrasena'],
          line[valores]['provincia'], int(line[valores]['permisos']),
@@ -57,14 +60,14 @@ for line in users_content['usuarios']:
     """
     Fechas
     """
-    for fecha in range(0,len(line[valores]['fechas'])):
+    for fecha in range(0, len(line[valores]['fechas'])):
         cur.execute("INSERT OR IGNORE INTO fechas(usuario, fecha)"
                     "VALUES ('%s','%s')" %
                     (valores, line[valores]['fechas'][fecha]))
     """
     IPs
     """
-    for ips in range(0,len(line[valores]['ips'])):
+    for ips in range(0, len(line[valores]['ips'])):
         cur.execute("INSERT OR IGNORE INTO ips(usuario, ip)"
                     "VALUES ('%s','%s')" %
                     (valores, line[valores]['ips'][ips]))
