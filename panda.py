@@ -46,3 +46,68 @@ In case of wanting special column name, fetch_tables should be invoked directly
 no_missing_ips_df = pd.DataFrame(fetch_tables("ips", "*", None), columns=["nick", "ip"])
 no_missing_fechas_df = pd.DataFrame(fetch_tables("fechas", "*", None), columns=["nick", "fecha"])
 print(no_missing_ips_df)
+"""
+###
+EJERCICIO 2
+###
+"""
+
+"""
+Fechas
+"""
+"""Agrupamos por usuario"""
+date_group_df = no_missing_fechas_df.groupby('Usuario')
+"""Lista para guardar el total de fechas por user"""
+dateTotals = pd.Series()
+i = 0
+for key, item in date_group_df:
+    number = int(len(date_group_df.get_group(key)))
+    dateTotals._set_value(i, number)
+    i = i+1
+"""print(dateTotals)"""
+
+"""
+Desviacion tipica o estandar
+axis: 0 -> por columnas; 1 -> por filas
+skipna: false -> tener encuenta valores nulos; true -> descartarlos
+numeric_only: true -> solo int, bool y float; false -> fuerza todas
+"""
+date_std = dateTotals.std()
+print(date_std)
+
+"""Media (para obtener todos, ej mediana, media... con .describe(); la mediana con .median)"""
+date_mean = dateTotals.mean()
+print(date_mean)
+
+"""
+IPs
+"""
+"""Agrupamos por usuario"""
+ip_group_df = no_missing_ips_df.groupby('Usuario')
+"""Lista para guardar el total de ips por user"""
+ipTotals = pd.Series()
+i = 0
+for key, item in ip_group_df:
+    number = int(len(ip_group_df.get_group(key)))
+    ipTotals._set_value(i, number)
+    i = i+1
+print(ipTotals)
+
+"""Desviacion tipica o estandar"""
+ip_std = ipTotals.std()
+print(ip_std)
+
+"""Media (para obtener todos, ej mediana, media... con .describe(); la mediana con .median)"""
+ip_mean = ipTotals.mean()
+print(ip_mean)
+
+"""
+Emails
+"""
+"""Desviacion tipica o estandar"""
+email_std = no_missing_emails_df['emailTotal'].std()
+print(email_std)
+
+"""Media (para obtener todos, ej mediana, media... con .describe(); la mediana con .median)"""
+email_mean = no_missing_emails_df['emailTotal'].mean()
+print(email_mean)
