@@ -16,7 +16,7 @@ cur = con.cursor()
 cur.execute("CREATE TABLE IF NOT EXISTS legal"
             "(url text, cookies integer, aviso integer, proteccion_datos integer, creacion integer, PRIMARY KEY(url))")
 cur.execute("CREATE TABLE IF NOT EXISTS users"
-            "(nick text, telefono real, passwd text, provincia text, permisos integer,"
+            "(nick text, telefono integer, passwd text, provincia text, permisos integer,"
             "email_total integer, email_phising integer, email_click integer, PRIMARY KEY(nick))")
 cur.execute("CREATE TABLE IF NOT EXISTS fechas"
             "(usuario text, fecha text, FOREIGN KEY(usuario) REFERENCES users(nick), UNIQUE(usuario, fecha))")
