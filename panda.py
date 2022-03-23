@@ -101,9 +101,11 @@ print(ip_mean)
 Emails
 """
 """Desviacion tipica o estandar"""
+
 email_std = no_missing_emails_df['email_total'].std()
 print(email_std)
 
 """Media (para obtener todos, ej mediana, media... con .describe(); la mediana con .median)"""
 email_mean = no_missing_emails_df['email_total'].mean()
+
 print(email_mean)
