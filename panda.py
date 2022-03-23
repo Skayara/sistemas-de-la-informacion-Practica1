@@ -1,5 +1,4 @@
 import sqlite3
-from tokenize import String
 from typing import List
 
 import pandas as pd
@@ -17,16 +16,13 @@ def fetch_tables(table: str, columns: str, condition):
 
 
 def array_to_string(columns: List[str]) -> str:
-    if len(columns) == 0:
-        return ValueError
-    else:
-        string_result: str = columns[0]
-        for c in range(1, len(columns)):
-            string_result = string_result + ", " + columns[c]
-        return string_result
+    string_result: str = columns[0]
+    for c in range(1, len(columns)):
+        string_result = string_result + ", " + columns[c]
+    return string_result
 
 
-def create_dataframe(table: str, columns: str, condition: str):
+def create_dataframe(table: str, columns: list[str], condition: str):
     if condition is None:
         return pd.DataFrame(fetch_tables(table, array_to_string(columns), None), columns=columns)
     else:
@@ -56,7 +52,7 @@ EJERCICIO 2
 Fechas
 """
 """Agrupamos por usuario"""
-date_group_df = no_missing_fechas_df.groupby('Usuario')
+date_group_df = no_missing_fechas_df.groupby('nick')
 """Lista para guardar el total de fechas por user"""
 dateTotals = pd.Series()
 i = 0
@@ -83,7 +79,7 @@ print(date_mean)
 IPs
 """
 """Agrupamos por usuario"""
-ip_group_df = no_missing_ips_df.groupby('Usuario')
+ip_group_df = no_missing_ips_df.groupby('nick')
 """Lista para guardar el total de ips por user"""
 ipTotals = pd.Series()
 i = 0
@@ -105,9 +101,11 @@ print(ip_mean)
 Emails
 """
 """Desviacion tipica o estandar"""
-email_std = no_missing_emails_df['emailTotal'].std()
+
+email_std = no_missing_emails_df['email_total'].std()
 print(email_std)
 
 """Media (para obtener todos, ej mediana, media... con .describe(); la mediana con .median)"""
-email_mean = no_missing_emails_df['emailTotal'].mean()
+email_mean = no_missing_emails_df['email_total'].mean()
+
 print(email_mean)
