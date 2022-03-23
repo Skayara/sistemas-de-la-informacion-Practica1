@@ -1,5 +1,6 @@
 import sqlite3
 from tokenize import String
+from typing import List
 
 import pandas as pd
 
@@ -15,7 +16,7 @@ def fetch_tables(table: str, columns: str, condition):
     return cur.fetchall()
 
 
-def array_to_string(columns) -> str:
+def array_to_string(columns: List[str]) -> str:
     if len(columns) == 0:
         return ValueError
     else:
