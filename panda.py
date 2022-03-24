@@ -129,13 +129,10 @@ user_df = create_dataframe("users", ["nick", "permisos", "email_total", "email_p
 """
 Emails Phishing Permisos
 """
-print("\nEmails Phishing Persimos: ")
+print("\nEmails Phishing Permisos: \n")
 
 print("Numero de observaciones con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].sum()[0])
 print("Numero de observaciones con permisos de administrador: ", user_df.groupby('permisos')['email_phishing'].sum()[1])
-
-#print("Numero de valores ausentes con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'][0])
-#print("Numero de valores ausentes con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'][1])
 
 print("Mediana con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].median()[0])
 print("Mediana con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].median()[1])
@@ -156,13 +153,10 @@ print("Valor Minimo con permisos de Administrador: ", user_df.groupby('permisos'
 Emails Phishing Emails Totales
 """
 
-print("\nEmails Phishing Totales:")
+print("\nEmails Phishing Totales: \n")
 
 print("Numero de observaciones con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].sum())
 print("Numero de observaciones con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].sum())
-
-#print("Numero de valores ausentes con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']])
-#print("Numero de valores ausentes con email >= 200: ", user_df.groupby('email_total')['email_phishing'])
 
 print("Mediana con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].median())
 print("Mediana con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].median())
@@ -178,3 +172,29 @@ print("Valor Maximo con email >= 200: ", user_df.loc[user_df.email_total>=200, [
 
 print("Valor Minimo con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].min())
 print("Valor Minimo con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].min())
+
+"""
+Valores Ausentes
+"""
+#Permisos
+print("\n Valores Ausentes segun permisos: \n")
+
+for i in user_df.index:
+    if (user_df['email_total'][i] < (user_df['email_phishing'][i] + user_df['email_click'][i])):
+        if(user_df['permisos'][i] == 0):
+            print("Encontrado error en usuario con permisos de Usuario: donde el total de emails es ",  user_df['email_total'][i], ", pero el numero de emails de phishing es ", user_df['email_phishing'][i], " y el numero de emails clicados es ", user_df['email_click'][i])
+        else:
+            print("Encontrado error en usuario con permisos de Administrador: donde el total de emails es ",user_df['email_total'][i], ", pero el numero de emails de phishing es ", user_df['email_phishing'][i]," y el numero de emails clicados es ", user_df['email_click'][i])
+
+#Emails
+print("\n Valores Ausentes segun numero de email totales: \n")
+
+for i in user_df[user_df.email_total<200].index:
+    if (user_df['email_total'][i] < (user_df['email_phishing'][i] + user_df['email_click'][i])):
+        print("Encontrado error en usuario con total de emails inferior a 200: donde el total de emails es ",  user_df['email_total'][i], ", pero el numero de emails de phishing es ", user_df['email_phishing'][i], " y el numero de emails clicados es ", user_df['email_click'][i])
+
+for i in user_df[user_df.email_total>=200].index:
+    if (user_df['email_total'][i] < (user_df['email_phishing'][i] + user_df['email_click'][i])):
+        print("Encontrado error en usuario con total de emails superior o igual a 200: donde el total de emails es ",
+              user_df['email_total'][i], ", pero el numero de emails de phishing es ", user_df['email_phishing'][i],
+              " y el numero de emails clicados es ", user_df['email_click'][i])
