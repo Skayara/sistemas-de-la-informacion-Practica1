@@ -129,6 +129,8 @@ user_df = create_dataframe("users", ["nick", "permisos", "email_total", "email_p
 """
 Emails Phishing Permisos
 """
+print("\nEmails Phishing Persimos: ")
+
 print("Numero de observaciones con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].sum()[0])
 print("Numero de observaciones con permisos de administrador: ", user_df.groupby('permisos')['email_phishing'].sum()[1])
 
@@ -141,8 +143,8 @@ print("Mediana con permisos de Administrador: ", user_df.groupby('permisos')['em
 print("Media con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].mean()[0])
 print("Media con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].mean()[1])
 
-#print("Varianza con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].str()[0])
-#print("Varianza con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].str()[1])
+print(r"Varianza con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].var(ddof=0)[0])
+print("Varianza con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].var(ddof=0)[1])
 
 print("Valor Maximo con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].max()[0])
 print("Valor Maximo con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].max()[1])
@@ -153,27 +155,26 @@ print("Valor Minimo con permisos de Administrador: ", user_df.groupby('permisos'
 """
 Emails Phishing Emails Totales
 """
-#print(user_df.loc[user_df.email_total<200, ['email_phishing']])
-#print(user_df.loc[user_df.email_total>=200, ['email_phishing']])
-"""
-print("Numero de observaciones con email < 200: ", user_df.groupby('email_total')['email_phishing'].sum()[0])
-print("Numero de observaciones con email >= 200: ", user_df.groupby('email_total')['email_phishing'].sum()[1])
 
-#print("Numero de valores ausentes con email < 200: ", user_df.groupby('email_total')['email_phishing'][0])
-#print("Numero de valores ausentes con email >= 200: ", user_df.groupby('email_total')['email_phishing'][1])
+print("\nEmails Phishing Totales:")
 
-print("Mediana con email < 200: ", user_df.groupby('email_total')['email_phishing'].median()[0])
-print("Mediana con email >= 200: ", user_df.groupby('email_total')['email_phishing'].median()[1])
+print("Numero de observaciones con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].sum())
+print("Numero de observaciones con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].sum())
 
-print("Media con email < 200: ", user_df.groupby('email_total')['email_phishing'].mean()[0])
-print("Media con email >= 200: ", user_df.groupby('email_total')['email_phishing'].mean()[1])
+#print("Numero de valores ausentes con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']])
+#print("Numero de valores ausentes con email >= 200: ", user_df.groupby('email_total')['email_phishing'])
 
-#print("Varianza con email < 200: ", user_df.groupby('email_total')['email_phishing'].str()[0])
-#print("Varianza con email >= 200: ", user_df.groupby('email_total')['email_phishing'].str()[1])
+print("Mediana con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].median())
+print("Mediana con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].median())
 
-print("Valor Maximo con email < 200: ", user_df.groupby('email_total')['email_phishing'].max()[0])
-print("Valor Maximo con email >= 200: ", user_df.groupby('email_total')['email_phishing'].max()[1])
+print("Media con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].mean())
+print("Media con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].mean())
 
-print("Valor Minimo con email < 200: ", user_df.groupby('email_total')['email_phishing'].min()[0])
-print("Valor Minimo con email >= 200: ", user_df.groupby('email_total')['email_phishing'].min()[1])
-"""
+print("Varianza con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].var(ddof=0))
+print("Varianza con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].var(ddof=0))
+
+print("Valor Maximo con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].max())
+print("Valor Maximo con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].max())
+
+print("Valor Minimo con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].min())
+print("Valor Minimo con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].min())
