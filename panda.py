@@ -26,7 +26,7 @@ def array_to_string(columns: List[str]) -> str:
     return string_result
 
 
-def create_dataframe(table: str, columns: list[str], condition: str):
+def create_dataframe(table: str, columns: list[str], condition):
     if condition is None:
         return pd.DataFrame(fetch_tables(table, array_to_string(columns), None), columns=columns)
     else:
@@ -72,7 +72,7 @@ print("Media de conexiones en diferentes fechas por usuario: " + str(
 # Desviación tipica
 print("Desviacion tipica de conexiones en diferentes fechas por usuario: " + str(
     no_missing_fechas_df.groupby('nick').count().std(numeric_only=True)[0]))
-#Max y min
+# Max y min
 print("Maximo conteo de fechas en un usuario: " + str(
     no_missing_fechas_df.groupby('nick').count().max()[0]))
 print("Minimo conteo de fechas en un usuario: " + str(
@@ -106,7 +106,7 @@ print("\tEs decir, de la media de mensajes recibidos, un " + str(
 # Desviacion tipica
 print("Las desviaciones tipicas de los anteriores calculos son: " + str(no_missing_emails_df['email_total'].std()) +
       ", " + str(no_missing_emails_df['email_phishing'].std()) + ", " + str(no_missing_emails_df['email_click'].std()))
-#Max y min
+# Max y min
 print("Maximos numero de emails recibidos por un usuario: " + str(
     no_missing_emails_df['email_total'].max()))
 print("\tMinimos numero de emails recibidos por un usuario: " + str(
