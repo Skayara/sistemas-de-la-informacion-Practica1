@@ -17,7 +17,7 @@ cur.execute("CREATE TABLE IF NOT EXISTS legal"
             "(url text, cookies integer, aviso integer, proteccion_datos integer, creacion integer, PRIMARY KEY(url))")
 cur.execute("CREATE TABLE IF NOT EXISTS users"
             "(nick text, telefono integer, passwd text, provincia text, permisos integer,"
-            "email_total integer, email_phising integer, email_click integer, PRIMARY KEY(nick))")
+            "email_total integer, email_phishing integer, email_click integer, PRIMARY KEY(nick))")
 cur.execute("CREATE TABLE IF NOT EXISTS fechas"
             "(usuario text, fecha text, FOREIGN KEY(usuario) REFERENCES users(nick), UNIQUE(usuario, fecha))")
 cur.execute("CREATE TABLE IF NOT EXISTS ips"
@@ -50,7 +50,7 @@ for line in users_content['usuarios']:
     Users
     """
     cur.execute(
-        "INSERT OR IGNORE INTO users(nick, telefono, passwd, provincia, permisos,email_total, email_phising, "
+        "INSERT OR IGNORE INTO users(nick, telefono, passwd, provincia, permisos,email_total, email_phishing, "
         "email_click) "
         "VALUES ('%s','%d', '%s', '%s', '%d', '%d', '%d', '%d')" %
         (valores, parse_tel(line[valores]['telefono']), line[valores]['contrasena'],

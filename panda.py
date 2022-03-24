@@ -1,10 +1,14 @@
 import sqlite3
 from typing import List
-
+from numpy import nan
 import pandas as pd
 
 con = sqlite3.connect('practicaSI.db')
 cur = con.cursor()
+
+"""
+Useful functions
+"""
 
 
 def fetch_tables(table: str, columns: str, condition):
@@ -29,83 +33,89 @@ def create_dataframe(table: str, columns: list[str], condition: str):
         return pd.DataFrame(fetch_tables(table, array_to_string(columns), condition), columns=columns)
 
 
+"""
+Retrieving values
+"""
+# Legal
 no_missing_legal_df = create_dataframe("legal", ["url", "cookies", "aviso", "proteccion_datos", "creacion"],
                                        "url IS NOT 'None'")
-no_missing_passwd_df = create_dataframe("users", ["nick", "permisos", "passwd"], "passwd IS NOT 'None'")
-no_missing_telefono_df = create_dataframe("users", ["nick", "permisos", "telefono"], "telefono IS NOT 0")
-no_missing_provincia_df = create_dataframe("users", ["nick", "permisos", "provincia"], "provincia IS NOT 'None'"),
-no_missing_emails_df = create_dataframe("users", ["nick", "permisos", "email_total", "email_phising", "email_click"],
+
+# Users (all non valid values will be NaN)
+missing_users_df = create_dataframe("users", ["nick", "permisos", "passwd", "telefono", "provincia"], None)
+missing_users_df.replace(to_replace=["None"], value=nan, inplace=True)
+missing_users_df['telefono'].replace(to_replace=[0], value=nan, inplace=True)
+no_missing_emails_df = create_dataframe("users", ["nick", "permisos", "email_total", "email_phishing", "email_click"],
                                         "email_total > 0")
-"""
-In case of wanting special column name, fetch_tables should be invoked directly
-"""
+# In case of wanting special column name, fetch_tables should be invoked directly
 no_missing_ips_df = pd.DataFrame(fetch_tables("ips", "*", None), columns=["nick", "ip"])
 no_missing_fechas_df = pd.DataFrame(fetch_tables("fechas", "*", None), columns=["nick", "fecha"])
-print(no_missing_ips_df)
-"""
-###
-EJERCICIO 2
-###
-"""
 
+"""
+EJERCICIO 2
+"""
+"""
+Número de muestras
+"""
+print("Legal: muestras aceptables: " + str(no_missing_legal_df.count().sum()))
+print("Users: muestras aceptables: " + str(missing_users_df.count().sum() + no_missing_fechas_df['fecha'].count().sum()
+                                           + no_missing_ips_df['ip'].count().sum()
+                                           + no_missing_emails_df['email_total'].count().sum()
+                                           + no_missing_emails_df['email_phishing'].count().sum()
+                                           + no_missing_emails_df['email_click'].count().sum()))
 """
 Fechas
 """
-"""Agrupamos por usuario"""
-date_group_df = no_missing_fechas_df.groupby('nick')
-"""Lista para guardar el total de fechas por user"""
-dateTotals = pd.Series()
-i = 0
-for key, item in date_group_df:
-    number = int(len(date_group_df.get_group(key)))
-    dateTotals._set_value(i, number)
-    i = i+1
-"""print(dateTotals)"""
-
-"""
-Desviacion tipica o estandar
-axis: 0 -> por columnas; 1 -> por filas
-skipna: false -> tener encuenta valores nulos; true -> descartarlos
-numeric_only: true -> solo int, bool y float; false -> fuerza todas
-"""
-date_std = dateTotals.std()
-print(date_std)
-
-"""Media (para obtener todos, ej mediana, media... con .describe(); la mediana con .median)"""
-date_mean = dateTotals.mean()
-print(date_mean)
+print("\nFechas:")
+# Media de conexiones en diferentes fechas por usuario
+print("Media de conexiones en diferentes fechas por usuario: " + str(
+    no_missing_fechas_df.groupby('nick').count().mean(numeric_only=True)[0]))
+# Desviación tipica
+print("Desviacion tipica de conexiones en diferentes fechas por usuario: " + str(
+    no_missing_fechas_df.groupby('nick').count().std(numeric_only=True)[0]))
+#Max y min
+print("Maximo conteo de fechas en un usuario: " + str(
+    no_missing_fechas_df.groupby('nick').count().max()[0]))
+print("Minimo conteo de fechas en un usuario: " + str(
+    no_missing_fechas_df.groupby('nick').count().min()[0]))
 
 """
 IPs
 """
-"""Agrupamos por usuario"""
-ip_group_df = no_missing_ips_df.groupby('nick')
-"""Lista para guardar el total de ips por user"""
-ipTotals = pd.Series()
-i = 0
-for key, item in ip_group_df:
-    number = int(len(ip_group_df.get_group(key)))
-    ipTotals._set_value(i, number)
-    i = i+1
-print(ipTotals)
-
-"""Desviacion tipica o estandar"""
-ip_std = ipTotals.std()
-print(ip_std)
-
-"""Media (para obtener todos, ej mediana, media... con .describe(); la mediana con .median)"""
-ip_mean = ipTotals.mean()
-print(ip_mean)
+print("\nIPs:")
+# Media de conexiones en diferentes fechas por usuario
+print(
+    "Media de diferentes ip por usuario: " + str(no_missing_ips_df.groupby('nick').count().mean(numeric_only=True)[0]))
+# Desviación tipica
+print("Desviacion tipica de diferentes ip por usuario: " + str(
+    no_missing_ips_df.groupby('nick').count().std(numeric_only=True)[0]))
 
 """
 Emails
 """
-"""Desviacion tipica o estandar"""
-
-email_std = no_missing_emails_df['email_total'].std()
-print(email_std)
-
-"""Media (para obtener todos, ej mediana, media... con .describe(); la mediana con .median)"""
-email_mean = no_missing_emails_df['email_total'].mean()
-
-print(email_mean)
+print("\nEmails:")
+# Media (para obtener todos, ej mediana, media... con .describe(); la mediana con .median)
+mean_total = no_missing_emails_df['email_total'].mean()
+mean_phishing = no_missing_emails_df['email_phishing'].mean()
+mean_click = no_missing_emails_df['email_click'].mean()
+print("Los usuarios reciben de media " + str(mean_total) +
+      " emails, de los cuales " + str(mean_phishing) + " suelen ser phishing.")
+print("\tEstos ataques han tenido exito un promedio de " + str(mean_click) + " veces.")
+print("\tEs decir, de la media de mensajes recibidos, un " + str(
+    round(mean_phishing / mean_total * 100, 2)) + "% eran phising con un "
+      + str(round(mean_click / mean_phishing * 100, 2)) + "% de exito")
+# Desviacion tipica
+print("Las desviaciones tipicas de los anteriores calculos son: " + str(no_missing_emails_df['email_total'].std()) +
+      ", " + str(no_missing_emails_df['email_phishing'].std()) + ", " + str(no_missing_emails_df['email_click'].std()))
+#Max y min
+print("Maximos numero de emails recibidos por un usuario: " + str(
+    no_missing_emails_df['email_total'].max()))
+print("\tMinimos numero de emails recibidos por un usuario: " + str(
+    no_missing_emails_df['email_total'].min()))
+print("Maximo numero de phishing recibidos por un usuario: " + str(
+    no_missing_emails_df['email_phishing'].max()))
+print("\tMinimo numero de phishing recibidos por un usuario: " + str(
+    no_missing_emails_df['email_phishing'].min()))
+print("Maximo numero de phishing clicados por un usuario: " + str(
+    no_missing_emails_df['email_click'].max()))
+print("\tMinimo numero de phishing clicados por un usuario: " + str(
+    no_missing_emails_df['email_click'].min()))
