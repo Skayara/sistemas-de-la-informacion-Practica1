@@ -119,3 +119,61 @@ print("Maximo numero de phishing clicados por un usuario: " + str(
     no_missing_emails_df['email_click'].max()))
 print("\tMinimo numero de phishing clicados por un usuario: " + str(
     no_missing_emails_df['email_click'].min()))
+
+
+"""
+EJERCICIO 3
+"""
+user_df = create_dataframe("users", ["nick", "permisos", "email_total", "email_phishing", "email_click"], None)
+
+"""
+Emails Phishing Permisos
+"""
+print("Numero de observaciones con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].sum()[0])
+print("Numero de observaciones con permisos de administrador: ", user_df.groupby('permisos')['email_phishing'].sum()[1])
+
+#print("Numero de valores ausentes con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'][0])
+#print("Numero de valores ausentes con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'][1])
+
+print("Mediana con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].median()[0])
+print("Mediana con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].median()[1])
+
+print("Media con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].mean()[0])
+print("Media con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].mean()[1])
+
+#print("Varianza con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].str()[0])
+#print("Varianza con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].str()[1])
+
+print("Valor Maximo con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].max()[0])
+print("Valor Maximo con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].max()[1])
+
+print("Valor Minimo con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].min()[0])
+print("Valor Minimo con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].min()[1])
+
+"""
+Emails Phishing Emails Totales
+"""
+#print(user_df.loc[user_df.email_total<200, ['email_phishing']])
+#print(user_df.loc[user_df.email_total>=200, ['email_phishing']])
+"""
+print("Numero de observaciones con email < 200: ", user_df.groupby('email_total')['email_phishing'].sum()[0])
+print("Numero de observaciones con email >= 200: ", user_df.groupby('email_total')['email_phishing'].sum()[1])
+
+#print("Numero de valores ausentes con email < 200: ", user_df.groupby('email_total')['email_phishing'][0])
+#print("Numero de valores ausentes con email >= 200: ", user_df.groupby('email_total')['email_phishing'][1])
+
+print("Mediana con email < 200: ", user_df.groupby('email_total')['email_phishing'].median()[0])
+print("Mediana con email >= 200: ", user_df.groupby('email_total')['email_phishing'].median()[1])
+
+print("Media con email < 200: ", user_df.groupby('email_total')['email_phishing'].mean()[0])
+print("Media con email >= 200: ", user_df.groupby('email_total')['email_phishing'].mean()[1])
+
+#print("Varianza con email < 200: ", user_df.groupby('email_total')['email_phishing'].str()[0])
+#print("Varianza con email >= 200: ", user_df.groupby('email_total')['email_phishing'].str()[1])
+
+print("Valor Maximo con email < 200: ", user_df.groupby('email_total')['email_phishing'].max()[0])
+print("Valor Maximo con email >= 200: ", user_df.groupby('email_total')['email_phishing'].max()[1])
+
+print("Valor Minimo con email < 200: ", user_df.groupby('email_total')['email_phishing'].min()[0])
+print("Valor Minimo con email >= 200: ", user_df.groupby('email_total')['email_phishing'].min()[1])
+"""
