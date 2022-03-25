@@ -130,28 +130,30 @@ Emails Phishing Permisos
 """
 print("\nEmails Phishing Permisos: \n")
 
+no_missing_phishing_emails_groupby_permisos_df = no_missing_emails_df.groupby('permisos')['email_phishing']
+
 print("Numero de observaciones con permisos de usuario: ",
-      no_missing_emails_df.groupby('permisos')['email_phishing'].sum()[0])
+      no_missing_phishing_emails_groupby_permisos_df.sum()[0])
 print("Numero de observaciones con permisos de administrador: ",
-      no_missing_emails_df.groupby('permisos')['email_phishing'].sum()[1])
+      no_missing_phishing_emails_groupby_permisos_df.sum()[1])
 
-print("Mediana con permisos de usuario: ", no_missing_emails_df.groupby('permisos')['email_phishing'].median()[0])
-print("Mediana con permisos de Administrador: ", no_missing_emails_df.groupby('permisos')['email_phishing'].median()[1])
+print("Mediana con permisos de usuario: ", no_missing_phishing_emails_groupby_permisos_df.median()[0])
+print("Mediana con permisos de Administrador: ", no_missing_phishing_emails_groupby_permisos_df.median()[1])
 
-print("Media con permisos de usuario: ", no_missing_emails_df.groupby('permisos')['email_phishing'].mean()[0])
-print("Media con permisos de Administrador: ", no_missing_emails_df.groupby('permisos')['email_phishing'].mean()[1])
+print("Media con permisos de usuario: ", no_missing_phishing_emails_groupby_permisos_df.mean()[0])
+print("Media con permisos de Administrador: ", no_missing_phishing_emails_groupby_permisos_df.mean()[1])
 
-print("Varianza con permisos de usuario: ", no_missing_emails_df.groupby('permisos')['email_phishing'].var(ddof=0)[0])
+print("Varianza con permisos de usuario: ", no_missing_phishing_emails_groupby_permisos_df.var(ddof=0)[0])
 print("Varianza con permisos de Administrador: ",
-      no_missing_emails_df.groupby('permisos')['email_phishing'].var(ddof=0)[1])
+      no_missing_phishing_emails_groupby_permisos_df.var(ddof=0)[1])
 
-print("Valor Maximo con permisos de usuario: ", no_missing_emails_df.groupby('permisos')['email_phishing'].max()[0])
+print("Valor Maximo con permisos de usuario: ", no_missing_phishing_emails_groupby_permisos_df.max()[0])
 print("Valor Maximo con permisos de Administrador: ",
-      no_missing_emails_df.groupby('permisos')['email_phishing'].max()[1])
+      no_missing_phishing_emails_groupby_permisos_df.max()[1])
 
-print("Valor Minimo con permisos de usuario: ", no_missing_emails_df.groupby('permisos')['email_phishing'].min()[0])
+print("Valor Minimo con permisos de usuario: ", no_missing_phishing_emails_groupby_permisos_df.min()[0])
 print("Valor Minimo con permisos de Administrador: ",
-      no_missing_emails_df.groupby('permisos')['email_phishing'].min()[1])
+      no_missing_phishing_emails_groupby_permisos_df.min()[1])
 
 """
 Emails Phishing Emails Totales
