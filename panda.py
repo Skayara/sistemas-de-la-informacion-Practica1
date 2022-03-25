@@ -45,7 +45,7 @@ missing_users_df = create_dataframe("users", ["nick", "permisos", "passwd", "tel
 missing_users_df.replace(to_replace=["None"], value=nan, inplace=True)
 missing_users_df['telefono'].replace(to_replace=[0], value=nan, inplace=True)
 no_missing_emails_df = create_dataframe("users", ["nick", "permisos", "email_total", "email_phishing", "email_click"],
-                                        "email_total > 0")
+                                        None)
 # In case of wanting special column name, fetch_tables should be invoked directly
 no_missing_ips_df = pd.DataFrame(fetch_tables("ips", "*", None), columns=["nick", "ip"])
 no_missing_fechas_df = pd.DataFrame(fetch_tables("fechas", "*", None), columns=["nick", "fecha"])
@@ -62,6 +62,7 @@ print("Users: muestras aceptables: " + str(missing_users_df.count().sum() + no_m
                                            + no_missing_emails_df['email_total'].count().sum()
                                            + no_missing_emails_df['email_phishing'].count().sum()
                                            + no_missing_emails_df['email_click'].count().sum()))
+
 """
 Fechas
 """
@@ -120,34 +121,37 @@ print("Maximo numero de phishing clicados por un usuario: " + str(
 print("\tMinimo numero de phishing clicados por un usuario: " + str(
     no_missing_emails_df['email_click'].min()))
 
-
 """
 EJERCICIO 3
 """
-user_df = create_dataframe("users", ["nick", "permisos", "email_total", "email_phishing", "email_click"], None)
 
 """
 Emails Phishing Permisos
 """
 print("\nEmails Phishing Permisos: \n")
 
-print("Numero de observaciones con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].sum()[0])
-print("Numero de observaciones con permisos de administrador: ", user_df.groupby('permisos')['email_phishing'].sum()[1])
+print("Numero de observaciones con permisos de usuario: ",
+      no_missing_emails_df.groupby('permisos')['email_phishing'].sum()[0])
+print("Numero de observaciones con permisos de administrador: ",
+      no_missing_emails_df.groupby('permisos')['email_phishing'].sum()[1])
 
-print("Mediana con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].median()[0])
-print("Mediana con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].median()[1])
+print("Mediana con permisos de usuario: ", no_missing_emails_df.groupby('permisos')['email_phishing'].median()[0])
+print("Mediana con permisos de Administrador: ", no_missing_emails_df.groupby('permisos')['email_phishing'].median()[1])
 
-print("Media con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].mean()[0])
-print("Media con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].mean()[1])
+print("Media con permisos de usuario: ", no_missing_emails_df.groupby('permisos')['email_phishing'].mean()[0])
+print("Media con permisos de Administrador: ", no_missing_emails_df.groupby('permisos')['email_phishing'].mean()[1])
 
-print(r"Varianza con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].var(ddof=0)[0])
-print("Varianza con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].var(ddof=0)[1])
+print("Varianza con permisos de usuario: ", no_missing_emails_df.groupby('permisos')['email_phishing'].var(ddof=0)[0])
+print("Varianza con permisos de Administrador: ",
+      no_missing_emails_df.groupby('permisos')['email_phishing'].var(ddof=0)[1])
 
-print("Valor Maximo con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].max()[0])
-print("Valor Maximo con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].max()[1])
+print("Valor Maximo con permisos de usuario: ", no_missing_emails_df.groupby('permisos')['email_phishing'].max()[0])
+print("Valor Maximo con permisos de Administrador: ",
+      no_missing_emails_df.groupby('permisos')['email_phishing'].max()[1])
 
-print("Valor Minimo con permisos de usuario: ", user_df.groupby('permisos')['email_phishing'].min()[0])
-print("Valor Minimo con permisos de Administrador: ", user_df.groupby('permisos')['email_phishing'].min()[1])
+print("Valor Minimo con permisos de usuario: ", no_missing_emails_df.groupby('permisos')['email_phishing'].min()[0])
+print("Valor Minimo con permisos de Administrador: ",
+      no_missing_emails_df.groupby('permisos')['email_phishing'].min()[1])
 
 """
 Emails Phishing Emails Totales
@@ -155,46 +159,52 @@ Emails Phishing Emails Totales
 
 print("\nEmails Phishing Totales: \n")
 
-print("Numero de observaciones con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].sum())
-print("Numero de observaciones con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].sum())
+print("Numero de observaciones con email < 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total < 200, ['email_phishing']].sum()[0])
+print("Numero de observaciones con email >= 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total >= 200, ['email_phishing']].sum()[0])
 
-print("Mediana con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].median())
-print("Mediana con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].median())
+print("Mediana con email < 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total < 200, ['email_phishing']].median()[0])
+print("Mediana con email >= 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total >= 200, ['email_phishing']].median()[0])
 
-print("Media con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].mean())
-print("Media con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].mean())
+print("Media con email < 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total < 200, ['email_phishing']].mean()[0])
+print("Media con email >= 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total >= 200, ['email_phishing']].mean()[0])
 
-print("Varianza con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].var(ddof=0))
-print("Varianza con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].var(ddof=0))
+print("Varianza con email < 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total < 200, ['email_phishing']].var(ddof=0)[0])
+print("Varianza con email >= 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total >= 200, ['email_phishing']].var(ddof=0)[0])
 
-print("Valor Maximo con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].max())
-print("Valor Maximo con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].max())
+print("Valor Maximo con email < 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total < 200, ['email_phishing']].max()[0])
+print("Valor Maximo con email >= 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total >= 200, ['email_phishing']].max()[0])
 
-print("Valor Minimo con email < 200: ", user_df.loc[user_df.email_total<200, ['email_phishing']].min())
-print("Valor Minimo con email >= 200: ", user_df.loc[user_df.email_total>=200, ['email_phishing']].min())
+print("Valor Minimo con email < 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total < 200, ['email_phishing']].min()[0])
+print("Valor Minimo con email >= 200: ",
+      no_missing_emails_df.loc[no_missing_emails_df.email_total >= 200, ['email_phishing']].min()[0])
 
 """
 Valores Ausentes
 """
-#Permisos
+# Permisos
 print("\n Valores Ausentes segun permisos: \n")
-
-for i in user_df.index:
-    if (user_df['email_total'][i] < (user_df['email_phishing'][i] + user_df['email_click'][i])):
-        if(user_df['permisos'][i] == 0):
-            print("Encontrado error en usuario con permisos de Usuario: donde el total de emails es ",  user_df['email_total'][i], ", pero el numero de emails de phishing es ", user_df['email_phishing'][i], " y el numero de emails clicados es ", user_df['email_click'][i])
-        else:
-            print("Encontrado error en usuario con permisos de Administrador: donde el total de emails es ",user_df['email_total'][i], ", pero el numero de emails de phishing es ", user_df['email_phishing'][i]," y el numero de emails clicados es ", user_df['email_click'][i])
-
-#Emails
+print("Usuario: ",
+      no_missing_emails_df[no_missing_emails_df['permisos'] == 0]['email_phishing'].isna().filter(
+          regex="True").count().sum())
+print("Admin: ",
+      no_missing_emails_df[no_missing_emails_df['permisos'] == 1]['email_phishing'].isna().filter(
+          regex="True").count().sum())
+# Emails
 print("\n Valores Ausentes segun numero de email totales: \n")
-
-for i in user_df[user_df.email_total<200].index:
-    if (user_df['email_total'][i] < (user_df['email_phishing'][i] + user_df['email_click'][i])):
-        print("Encontrado error en usuario con total de emails inferior a 200: donde el total de emails es ",  user_df['email_total'][i], ", pero el numero de emails de phishing es ", user_df['email_phishing'][i], " y el numero de emails clicados es ", user_df['email_click'][i])
-
-for i in user_df[user_df.email_total>=200].index:
-    if (user_df['email_total'][i] < (user_df['email_phishing'][i] + user_df['email_click'][i])):
-        print("Encontrado error en usuario con total de emails superior o igual a 200: donde el total de emails es ",
-              user_df['email_total'][i], ", pero el numero de emails de phishing es ", user_df['email_phishing'][i],
-              " y el numero de emails clicados es ", user_df['email_click'][i])
+print("Menor que 200: ",
+      no_missing_emails_df[no_missing_emails_df['email_total'] < 200]['email_phishing'].isna().filter(
+          regex="True").count().sum())
+print("Mayor o igual que 200: ",
+      no_missing_emails_df[no_missing_emails_df['email_total'] >= 200]['email_phishing'].isna().filter(
+          regex="True").count().sum())
