@@ -225,4 +225,5 @@ for i in users_df['passwd'].index:
         p = hashlib.md5(line.strip("\n").encode('utf-8')).hexdigest()
         if users_df['passwd'][i] == str(p):
             usuarios_criticos.append(i)
-            print(i)
+            print(i, " vulnerable")
+print(usuarios_criticos)
