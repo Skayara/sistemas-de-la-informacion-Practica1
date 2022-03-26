@@ -309,7 +309,6 @@ vuln = ['Vulnerable', 'No vulnerable']
 medias = [ip_vuln_df['ip'].mean(), ip_no_vuln_df['ip'].mean()]
 ax.bar(vuln, medias)
 plt.show()
-
 """
 WEB
 """
