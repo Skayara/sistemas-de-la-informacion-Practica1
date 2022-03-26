@@ -4,7 +4,7 @@ from numpy import nan
 import pandas as pd
 import hashlib
 
-con = sqlite3.connect('practicaSI.db')
+con = sqlite3.connect('resources/practicaSI.db')
 cur = con.cursor()
 
 """
@@ -220,7 +220,7 @@ users_df = create_dataframe("users", ["nick", "passwd", "email_click", "email_to
 usuarios_criticos = list()
 
 for i in users_df['passwd'].index:
-    f = open("weak_pass.txt", "rt")
+    f = open("resources/smallRockYou.txt", "rt")
     for line in f.readlines():
         p = hashlib.md5(line.strip("\n").encode('utf-8')).hexdigest()
         if users_df['passwd'][i] == str(p):

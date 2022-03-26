@@ -10,7 +10,7 @@ def parse_tel(original_value):
 
 
 """Create database (or ignore if database exists)"""
-con = sqlite3.connect('practicaSI.db')
+con = sqlite3.connect('resources/practicaSI.db')
 cur = con.cursor()
 """Create tables (or ignore if table already exists)"""
 cur.execute("CREATE TABLE IF NOT EXISTS legal"
@@ -24,10 +24,10 @@ cur.execute("CREATE TABLE IF NOT EXISTS ips"
             "(usuario text, ip text, FOREIGN KEY(usuario) REFERENCES users(nick), UNIQUE(usuario, ip))")
 con.commit()
 
-legal_json = open("./json/legal.json", "r")
+legal_json = open("resources/json/legal.json", "r")
 legal_content = json.load(legal_json)
 
-users_json = open("./json/users.json", "r")
+users_json = open("resources/json/users.json", "r")
 users_content = json.load(users_json)
 
 """
