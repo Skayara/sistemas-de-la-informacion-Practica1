@@ -1,5 +1,7 @@
 import sqlite3
 from typing import List
+
+import numpy as np
 from numpy import nan
 import pandas as pd
 import hashlib
@@ -217,13 +219,26 @@ Ejercicio 4
 """
 
 users_df = create_dataframe("users", ["nick", "passwd", "email_click", "email_total", "email_phishing"], None)
-usuarios_criticos = list()
 
+usuarios_criticos_df = pd.DataFrame(columns=['nick', 'email_phishing', 'email_click'])
 for i in users_df['passwd'].index:
     f = open("resources/smallRockYou.txt", "rt")
     for line in f.readlines():
         p = hashlib.md5(line.strip("\n").encode('utf-8')).hexdigest()
         if users_df['passwd'][i] == str(p):
-            usuarios_criticos.append(i)
-            print(i, " vulnerable")
-print(usuarios_criticos)
+            usuarios_criticos_df.loc[len(usuarios_criticos_df.index)] = users_df.loc[
+                i, ['nick', 'email_phishing', 'email_click']]
+
+for index in usuarios_criticos_df['email_phishing'].index:
+    if usuarios_criticos_df["email_phishing"][index] != 0:
+        usuarios_criticos_df._set_value(index, "prob_click", usuarios_criticos_df["email_click"][index] /
+                                        usuarios_criticos_df["email_phishing"][index])
+    else:
+        usuarios_criticos_df._set_value(index, "prob_click", 0)
+
+# usuarios_criticos_df.assign(prob_click=lambda x: 0 if x.email_phishing == 0 else (x.email_click / x.email_phishing))
+# algunos no han recibido phishing, division por 0. Las funciones lambda no nos quieren. Mejor ir a por el 'for'
+# ups."""
+
+usuarios_criticos_df.sort_values(by=['prob_click'], ascending=False, inplace=True)
+print("Los 10 usuarios mas criticos son: \n", usuarios_criticos_df.head(10))
