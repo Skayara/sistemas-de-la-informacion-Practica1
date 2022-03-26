@@ -336,10 +336,14 @@ Pass comprometidas
 print("\nContrasenas comprometidas: ", nicks_vuln.count())
 print("Contrasenas no comprometidas: ", no_vuln_nick.count())
 
-#Es una opcion de grafico, si quieres luego miramos el otro
-fig = plt.figure()
-ax = fig.add_axes([0.05, 0.15, 0.90, 0.75])
-vuln = ['Comprometida', 'No comprometida']
-medias = [nicks_vuln.count(), no_vuln_nick.count()]
-ax.bar(vuln, medias)
+#Pie
+labels = 'Comprometida', 'No comprometida'
+sizes = [nicks_vuln.count(), no_vuln_nick.count()]
+explode = (0, 0)
+
+fig1, ax1 = plt.subplots()
+ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+        shadow=True, startangle=90)
+ax1.axis('equal')
+
 plt.show()
