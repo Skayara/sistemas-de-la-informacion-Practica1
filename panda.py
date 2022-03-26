@@ -2,6 +2,7 @@ import sqlite3
 from typing import List
 from numpy import nan
 import pandas as pd
+import hashlib
 
 con = sqlite3.connect('practicaSI.db')
 cur = con.cursor()
@@ -210,3 +211,21 @@ print("Menor que 200: ",
 print("Mayor o igual que 200: ",
       no_missing_emails_df[no_missing_emails_df['email_total'] >= 200]['email_phishing'].isna().filter(
           regex="True").count().sum())
+
+"""
+Ejercicio 4
+"""
+
+users_df = create_dataframe("users", ["nick", "passwd", "email_click", "email_total", "email_phishing"], None)
+usuariosCriticos = list()
+
+for i in users_df['passwd'].index:
+    print(i)
+    f = open("weak_pass.txt", "rt")
+
+    for line in f.readlines():
+        p = hashlib.md5(line.encode()).hexdigest()
+           
+        if users_df['passwd'][i] == p:
+            usuariosCriticos.append(i)
+            print(i)
