@@ -1,7 +1,10 @@
+import hashlib
 import sqlite3
 from typing import List
 
+import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 from numpy import nan
 
 con = sqlite3.connect('resources/practicaSI.db')
@@ -211,3 +214,114 @@ print("Menor que 200: ",
 print("Mayor o igual que 200: ",
       no_missing_emails_df[no_missing_emails_df['email_total'] >= 200]['email_phishing'].isna().filter(
           regex="True").count().sum())
+
+"""
+Ejercicio 4
+"""
+plt.rcParams['figure.figsize'] = [10, 10]
+"""
+Usuarios criticos
+"""
+users_df = create_dataframe("users", ["nick", "passwd", "email_click", "email_total", "email_phishing"], None)
+
+usuarios_criticos_df = pd.DataFrame(columns=['nick', 'email_phishing', 'email_click'])
+
+for i in users_df['passwd'].index:
+    f = open("resources/smallRockYou.txt", "rt")
+    for line in f.readlines():
+        p = hashlib.md5(line.strip("\n").encode('utf-8')).hexdigest()
+        if users_df['passwd'][i] == str(p):
+            usuarios_criticos_df.loc[len(usuarios_criticos_df.index)] = users_df.loc[
+                i, ['nick', 'email_phishing', 'email_click']]
+
+for index in usuarios_criticos_df['email_phishing'].index:
+    if usuarios_criticos_df["email_phishing"][index] != 0:
+        usuarios_criticos_df._set_value(index, "prob_click", usuarios_criticos_df["email_click"][index] /
+                                        usuarios_criticos_df["email_phishing"][index])
+    else:
+        usuarios_criticos_df._set_value(index, "prob_click", 0)
+
+# usuarios_criticos_df.assign(prob_click=lambda x: 0 if x.email_phishing == 0 else (x.email_click / x.email_phishing))
+# algunos no han recibido phishing, division por 0. Las funciones lambda no nos quieren. Mejor ir a por el 'for'
+# ups.
+
+
+usuarios_criticos_df.sort_values(by=['prob_click'], ascending=False, inplace=True)
+print("Los 10 usuarios mas criticos son: \n", usuarios_criticos_df.head(10))
+
+# Altair try
+"""
+chart_usuarios_criticos = alt.Chart(usuarios_criticos_df.head(10)).mark_bar().encode(
+    x='nick',
+    y='prob_click'
+)
+"""
+
+usuarios_criticos_df.head(10).plot(x="nick", y="prob_click", kind="bar")
+plt.show()
+
+"""
+Politicas de privacidad
+"""
+
+legal_politicas_df = create_dataframe("legal", ["url", "cookies", "aviso", "proteccion_datos", "creacion"], None)
+legal_politicas_df = legal_politicas_df.assign(policies_sum=lambda x: x.aviso + x.proteccion_datos + x.cookies)
+legal_politicas_df.sort_values(by=['policies_sum'], ascending=True, inplace=True)
+print("\nLas 5 webs mas desactualizadas son: \n", legal_politicas_df.head(5))
+
+N = 5
+ind = np.arange(N)
+width = 0.25
+
+cookies = legal_politicas_df['cookies'].head(5)
+bar1 = plt.bar(ind, cookies, width, color='r')
+
+aviso = legal_politicas_df['aviso'].head(5)
+bar2 = plt.bar(ind + width, aviso, width, color='g')
+
+datos = legal_politicas_df['proteccion_datos'].head(5)
+bar3 = plt.bar(ind + width * 2, datos, width, color='b')
+
+plt.xlabel("URL")
+plt.ylabel("Policies")
+plt.title("Players Score")
+print(str(legal_politicas_df['url'].head(5)))
+plt.xticks(ind + width, legal_politicas_df['url'].head(5))
+plt.legend((bar1, bar2, bar3), ('cookies', 'aviso', 'p_datos'))
+plt.show()
+
+"""
+IPs
+"""
+ip_count_df = no_missing_ips_df.groupby('nick').count()
+nicks_vuln = usuarios_criticos_df['nick']
+ip_vuln_df = pd.merge(ip_count_df, nicks_vuln, how='inner', on='nick')
+print("\nMedia de IPs de usuarios vulnerables: ", ip_vuln_df['ip'].mean())
+
+all_nicks = missing_users_df['nick']
+no_vuln_nick = pd.concat([all_nicks, nicks_vuln]).drop_duplicates(keep=False)
+ip_no_vuln_df = pd.merge(ip_count_df, no_vuln_nick, how='inner', on='nick')
+print("Media de IPs de usuarios no vulnerables: ", ip_no_vuln_df['ip'].mean())
+
+fig = plt.figure()
+ax = fig.add_axes([0.05, 0.15, 0.90, 0.75])
+vuln = ['Vulnerable', 'No vulnerable']
+medias = [ip_vuln_df['ip'].mean(), ip_no_vuln_df['ip'].mean()]
+ax.bar(vuln, medias)
+plt.show()
+
+"""
+WEB
+"""
+all_policies_df = legal_politicas_df[legal_politicas_df['policies_sum'] == 3]
+all_policies_df = all_policies_df.sort_values(by=['creacion'])
+print("\nCumplen las politicas: \n", all_policies_df)
+bad_policies_df = pd.concat([all_policies_df, legal_politicas_df]).drop_duplicates(keep=False)
+bad_policies_df = bad_policies_df.sort_values(by=['creacion'])
+print("No cumplen las politicas: \n", bad_policies_df)
+
+"""
+Pass comprometidas
+"""
+print("\nContrasenas comprometidas: ", nicks_vuln.count())
+print("Contrasenas no comprometidas: ", no_vuln_nick.count())
