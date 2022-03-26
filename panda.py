@@ -309,6 +309,7 @@ vuln = ['Vulnerable', 'No vulnerable']
 medias = [ip_vuln_df['ip'].mean(), ip_no_vuln_df['ip'].mean()]
 ax.bar(vuln, medias)
 plt.show()
+
 """
 WEB
 """
@@ -319,8 +320,26 @@ bad_policies_df = pd.concat([all_policies_df, legal_politicas_df]).drop_duplicat
 bad_policies_df = bad_policies_df.sort_values(by=['creacion'])
 print("No cumplen las politicas: \n", bad_policies_df)
 
+#Cumplen las politicas
+all_policies_df.plot(x="url", y="creacion", kind="bar")
+plt.ylim(1990, 2025)
+plt.show()
+
+#No cumplen las politicas
+bad_policies_df.plot(x="url", y="creacion", kind="bar")
+plt.ylim(1995, 2025)
+plt.show()
+
 """
 Pass comprometidas
 """
 print("\nContrasenas comprometidas: ", nicks_vuln.count())
 print("Contrasenas no comprometidas: ", no_vuln_nick.count())
+
+#Es una opcion de grafico, si quieres luego miramos el otro
+fig = plt.figure()
+ax = fig.add_axes([0.05, 0.15, 0.90, 0.75])
+vuln = ['Comprometida', 'No comprometida']
+medias = [nicks_vuln.count(), no_vuln_nick.count()]
+ax.bar(vuln, medias)
+plt.show()
