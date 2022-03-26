@@ -217,15 +217,12 @@ Ejercicio 4
 """
 
 users_df = create_dataframe("users", ["nick", "passwd", "email_click", "email_total", "email_phishing"], None)
-usuariosCriticos = list()
+usuarios_criticos = list()
 
 for i in users_df['passwd'].index:
-    print(i)
     f = open("weak_pass.txt", "rt")
-
     for line in f.readlines():
-        p = hashlib.md5(line.encode()).hexdigest()
-           
-        if users_df['passwd'][i] == p:
-            usuariosCriticos.append(i)
+        p = hashlib.md5(line.strip("\n").encode('utf-8')).hexdigest()
+        if users_df['passwd'][i] == str(p):
+            usuarios_criticos.append(i)
             print(i)
