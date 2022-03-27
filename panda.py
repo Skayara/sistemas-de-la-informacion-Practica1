@@ -309,6 +309,7 @@ vuln = ['Vulnerable', 'No vulnerable']
 medias = [ip_vuln_df['ip'].mean(), ip_no_vuln_df['ip'].mean()]
 ax.bar(vuln, medias)
 plt.show()
+
 """
 WEB
 """
@@ -319,8 +320,30 @@ bad_policies_df = pd.concat([all_policies_df, legal_politicas_df]).drop_duplicat
 bad_policies_df = bad_policies_df.sort_values(by=['creacion'])
 print("No cumplen las politicas: \n", bad_policies_df)
 
+#Cumplen las politicas
+all_policies_df.plot(x="url", y="creacion", kind="bar")
+plt.ylim(1990, 2025)
+plt.show()
+
+#No cumplen las politicas
+bad_policies_df.plot(x="url", y="creacion", kind="bar")
+plt.ylim(1995, 2025)
+plt.show()
+
 """
 Pass comprometidas
 """
 print("\nContrasenas comprometidas: ", nicks_vuln.count())
 print("Contrasenas no comprometidas: ", no_vuln_nick.count())
+
+#Pie
+labels = 'Comprometida', 'No comprometida'
+sizes = [nicks_vuln.count(), no_vuln_nick.count()]
+explode = (0, 0)
+
+fig1, ax1 = plt.subplots()
+ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+        shadow=True, startangle=90)
+ax1.axis('equal')
+
+plt.show()
