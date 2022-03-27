@@ -32,7 +32,7 @@ def array_to_string(columns: List[str]) -> str:
 
 def create_dataframe(table: str, columns: list[str], condition):
     if condition is None:
-        return pd.DataFrame(fetch_tables(table, array_to_string(columns), None), columns=columns)
+        return pd.DataFrame(fetch_tables(table,array_to_string(columns), None), columns=columns)
     else:
         return pd.DataFrame(fetch_tables(table, array_to_string(columns), condition), columns=columns)
 
@@ -66,7 +66,6 @@ print("Users: muestras aceptables: " + str(missing_users_df.count().sum() + no_m
                                            + no_missing_emails_df['email_total'].count().sum()
                                            + no_missing_emails_df['email_phishing'].count().sum()
                                            + no_missing_emails_df['email_click'].count().sum()))
-
 """
 Fechas
 """
@@ -242,8 +241,7 @@ for index in usuarios_criticos_df['email_phishing'].index:
         usuarios_criticos_df._set_value(index, "prob_click", 0)
 
 # usuarios_criticos_df.assign(prob_click=lambda x: 0 if x.email_phishing == 0 else (x.email_click / x.email_phishing))
-# algunos no han recibido phishing, division por 0. Las funciones lambda no nos quieren. Mejor ir a por el 'for'
-# ups.
+# algunos no han recibido phishing, division por 0 pero las funciones lambda no nos quieren.
 
 
 usuarios_criticos_df.sort_values(by=['prob_click'], ascending=False, inplace=True)
@@ -258,6 +256,7 @@ chart_usuarios_criticos = alt.Chart(usuarios_criticos_df.head(10)).mark_bar().en
 """
 
 usuarios_criticos_df.head(10).plot(x="nick", y="prob_click", kind="bar")
+plt.title('Los 10 usuarios más críticos')
 plt.show()
 
 """
@@ -284,7 +283,7 @@ bar3 = plt.bar(ind + width * 2, datos, width, color='b')
 
 plt.xlabel("URL")
 plt.ylabel("Policies")
-plt.title("Players Score")
+plt.title('Las 5 paginas web con más políticas desactualizadas')
 print(str(legal_politicas_df['url'].head(5)))
 plt.xticks(ind + width, legal_politicas_df['url'].head(5))
 plt.legend((bar1, bar2, bar3), ('cookies', 'aviso', 'p_datos'))
@@ -308,6 +307,7 @@ ax = fig.add_axes([0.05, 0.15, 0.90, 0.75])
 vuln = ['Vulnerable', 'No vulnerable']
 medias = [ip_vuln_df['ip'].mean(), ip_no_vuln_df['ip'].mean()]
 ax.bar(vuln, medias)
+plt.title('Media de conexiones de usuarios con contraseña vulnerable, frente a los que no son vulnerables')
 plt.show()
 
 """
@@ -323,11 +323,13 @@ print("No cumplen las politicas: \n", bad_policies_df)
 #Cumplen las politicas
 all_policies_df.plot(x="url", y="creacion", kind="bar")
 plt.ylim(1990, 2025)
+plt.title('Año de creación de las webs que cumplen todas las políticas de privacidad')
 plt.show()
 
 #No cumplen las politicas
 bad_policies_df.plot(x="url", y="creacion", kind="bar")
 plt.ylim(1995, 2025)
+plt.title('Año de creación de las webs que no cumplen alguna política de privacidad')
 plt.show()
 
 """
@@ -345,5 +347,5 @@ fig1, ax1 = plt.subplots()
 ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
         shadow=True, startangle=90)
 ax1.axis('equal')
-
+plt.title('El numero de contraseñas comprometidas y contraseñas no comprometidas.')
 plt.show()
