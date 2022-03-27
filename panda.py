@@ -32,7 +32,7 @@ def array_to_string(columns: List[str]) -> str:
 
 def create_dataframe(table: str, columns: list[str], condition):
     if condition is None:
-        return pd.DataFrame(fetch_tables(table,array_to_string(columns), None), columns=columns)
+        return pd.DataFrame(fetch_tables(table, array_to_string(columns), None), columns=columns)
     else:
         return pd.DataFrame(fetch_tables(table, array_to_string(columns), condition), columns=columns)
 
@@ -320,13 +320,13 @@ bad_policies_df = pd.concat([all_policies_df, legal_politicas_df]).drop_duplicat
 bad_policies_df = bad_policies_df.sort_values(by=['creacion'])
 print("No cumplen las politicas: \n", bad_policies_df)
 
-#Cumplen las politicas
+# Cumplen las politicas
 all_policies_df.plot(x="url", y="creacion", kind="bar")
 plt.ylim(1990, 2025)
 plt.title('Año de creación de las webs que cumplen todas las políticas de privacidad')
 plt.show()
 
-#No cumplen las politicas
+# No cumplen las politicas
 bad_policies_df.plot(x="url", y="creacion", kind="bar")
 plt.ylim(1995, 2025)
 plt.title('Año de creación de las webs que no cumplen alguna política de privacidad')
@@ -338,7 +338,7 @@ Pass comprometidas
 print("\nContrasenas comprometidas: ", nicks_vuln.count())
 print("Contrasenas no comprometidas: ", no_vuln_nick.count())
 
-#Pie
+# Pie
 labels = 'Comprometida', 'No comprometida'
 sizes = [nicks_vuln.count(), no_vuln_nick.count()]
 explode = (0, 0)

@@ -39,7 +39,7 @@ for line in legal_content['legal']:
     """
     Legal
     """
-    cur.execute("INSERT OR IGNORE INTO legal(url, cookies, aviso, proteccion_datos, creacion)"
+    cur.execute("INSERT OR IGNORE INTO legal(url, cookies,aviso, proteccion_datos, creacion)"
                 "VALUES ('%s','%d', '%d', '%d', '%d')" %
                 (valores, line[valores]['cookies'], line[valores]['aviso'],
                  line[valores]['proteccion_de_datos'], line[valores]['creacion']))
