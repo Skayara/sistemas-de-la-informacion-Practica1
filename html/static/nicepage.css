@@ -83,7 +83,7 @@
     -khtml-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    break-after: always;
+    break-after: always; /* experimental value */
     page-break-after: always; }
   .fr-view .fr-file {
     position: relative; }
