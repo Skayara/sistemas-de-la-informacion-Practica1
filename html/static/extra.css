@@ -1,0 +1,31 @@
+ .u-section-1 {
+  background-image: url("images/fff-min1.jpg");
+}
+
+.u-section-1 .u-sheet-1 {
+  min-height: 531px;
+}
+
+@media (max-width: 1199px) {
+  .u-section-1 .u-sheet-1 {
+    min-height: 438px;
+  }
+}
+
+@media (max-width: 991px) {
+  .u-section-1 .u-sheet-1 {
+    min-height: 335px;
+  }
+}
+
+@media (max-width: 767px) {
+  .u-section-1 .u-sheet-1 {
+    min-height: 251px;
+  }
+}
+
+@media (max-width: 575px) {
+  .u-section-1 .u-sheet-1 {
+    min-height: 158px;
+  }
+}
