@@ -114,7 +114,7 @@
 
   .u-section-1 .u-repeater-1 {
     min-height: 836px;
-    grid-template-columns: repeat(2, calc(50% - 11.25px));
+    grid-template-columns: repeat(2, calc(50% - 11px));
   }
 }
 
