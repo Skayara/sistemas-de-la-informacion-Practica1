@@ -1,4 +1,5 @@
 import json
+import plots
 
 from flask import Flask, render_template
 import plotly.graph_objects as go
@@ -18,15 +19,7 @@ def about_us():
 
 @app.route('/vulnerabilidades')
 def vulnerabilidades():
-    fig = go.Figure(
-        data=[go.Bar(y=[2, 1, 3])],
-        layout_title_text="Figura"
-    )
-    # fig.show()
-    import plotly
-    a = plotly.utils.PlotlyJSONEncoder
-    graphJSON = json.dumps(fig, cls=a)
-    return render_template('vulnerabilidades.html', graphJSON=graphJSON)
+    return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerabilities())
 
 
 @app.route('/login')
@@ -44,28 +37,12 @@ def login():
 
 @app.route('/usuariosCriticos')
 def usuarios_criticos():
-    fig = go.Figure(
-        data=[go.Bar(y=[2, 1, 3])],
-        layout_title_text="Figura"
-    )
-    # fig.show()
-    import plotly
-    a = plotly.utils.PlotlyJSONEncoder
-    graphJSON = json.dumps(fig, cls=a)
-    return render_template('usuariosCriticos.html', graphJSON=graphJSON)
+    return render_template('usuariosCriticos.html', graphJSON=plots.get_critic_users(10))
 
 
 @app.route('/paginasCriticas')
 def paginas_vulnerables():
-    fig = go.Figure(
-        data=[go.Bar(y=[2, 1, 3])],
-        layout_title_text="Figura"
-    )
-    # fig.show()
-    import plotly
-    a = plotly.utils.PlotlyJSONEncoder
-    graphJSON = json.dumps(fig, cls=a)
-    return render_template('paginasVulnerables.html', graphJSON=graphJSON)
+    return render_template('paginasVulnerables.html', graphJSON=plots.get_vulnerable_pages(5))
 
 
 @app.route('/extra')
