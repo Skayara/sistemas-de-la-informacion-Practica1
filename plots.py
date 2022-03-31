@@ -61,19 +61,20 @@ def get_critic_users(number_of_users: int) -> str:
         else:
             usuarios_criticos_df._set_value(index, "prob_click", 0)
     usuarios_criticos_df.sort_values(by=['prob_click'], ascending=False, inplace=True)
-    fig = go.Figure(
+    print(usuarios_criticos_df.head(10))
+    """fig = go.Figure(
         data=[go.Bar(x=usuarios_criticos_df['nick'].head(number_of_users),y=usuarios_criticos_df['prob_click'].head(number_of_users))],
         layout_title_text="Usuarios criticos"
     )
     a = plotly.utils.PlotlyJSONEncoder
-    return json.dumps(fig, cls=a)
-    """source = usuarios_criticos_df
+    return json.dumps(fig, cls=a)"""
+    source = usuarios_criticos_df.head(10)
     chart = alt.Chart(source).mark_bar().encode(
-        x='nick',
+        x=alt.X('nick', sort='-y'),
         y='prob_click'
     ).to_json()
-    print(chart)
-    return chart"""
+    # print(chart)
+    return chart
 
 
 def get_vulnerable_pages(number_of_users: int) -> str:
