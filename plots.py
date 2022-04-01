@@ -2,12 +2,10 @@ import hashlib
 import json
 import sqlite3
 from typing import List
-import plotly.graph_objects as go
-import plotly
-import numpy as np
-import pandas as pd
+
 import altair as alt
-from vega_datasets import data
+import pandas as pd
+import plotly.graph_objects as go
 
 con = sqlite3.connect('resources/practicaSI.db', check_same_thread=False)
 cur = con.cursor()
@@ -61,19 +59,17 @@ def get_critic_users(number_of_users: int) -> str:
         else:
             usuarios_criticos_df._set_value(index, "prob_click", 0)
     usuarios_criticos_df.sort_values(by=['prob_click'], ascending=False, inplace=True)
-    print(usuarios_criticos_df.head(10))
-    """fig = go.Figure(
-        data=[go.Bar(x=usuarios_criticos_df['nick'].head(number_of_users),y=usuarios_criticos_df['prob_click'].head(number_of_users))],
-        layout_title_text="Usuarios criticos"
-    )
-    a = plotly.utils.PlotlyJSONEncoder
-    return json.dumps(fig, cls=a)"""
-    source = usuarios_criticos_df.head(10)
-    chart = alt.Chart(source).mark_bar().encode(
+    source = usuarios_criticos_df.head(number_of_users)
+    chart = alt.Chart(source).mark_bar(cornerRadiusTopLeft=3,
+                                       cornerRadiusTopRight=3).encode(
         x=alt.X('nick', sort='-y'),
-        y='prob_click'
+        y=alt.Y('prob_click', axis=alt.Axis(format='.0%')),
+    ).properties(
+        width='container',
+        height=400
+    ).configure(
+        autosize="fit"
     ).to_json()
-    # print(chart)
     return chart
 
 
