@@ -22,6 +22,7 @@ def vulnerabilidades():
     return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerabilities())
 
 
+
 @app.route('/login')
 def login():
     fig = go.Figure(
@@ -39,6 +40,9 @@ def login():
 def usuarios_criticos():
     return render_template('usuariosCriticos.html', graphJSON=plots.get_critic_users(10))
 
+@app.route('/usuariosCriticosC')
+def usuarios_criticos_c():
+    return render_template('usuariosCriticos.html', graphJSON=plots.get_critic_users_spam(10, True))
 
 @app.route('/paginasCriticas')
 def paginas_vulnerables():

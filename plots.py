@@ -78,7 +78,6 @@ def get_vulnerable_pages(number_of_pages: int) -> str:
     number_of_pages = min(table_size, number_of_pages)
     legal_politicas_df = create_dataframe("legal", ["url", "cookies", "aviso", "proteccion_datos", "policies_sum"],
                                           "ORDER BY policies_sum ASC LIMIT " + str(number_of_pages))
-    print(legal_politicas_df)
     lacks_df = pd.DataFrame(columns=['url', 'lack', 'value', 'policies_sum'])
     for index in legal_politicas_df['url'].index:
         url = legal_politicas_df['url'][index]
@@ -95,7 +94,6 @@ def get_vulnerable_pages(number_of_pages: int) -> str:
                                         columns=['url', 'lack', 'value', 'policies_sum'])])
     # source = lacks_df.head(min(number_of_pages, lacks_df.shape[0]))
     source = lacks_df
-    print(lacks_df)
     chart = alt.Chart(source
                       ).mark_bar(cornerRadiusTopLeft=3, cornerRadiusTopRight=3).encode(
         alt.X('url', sort=alt.EncodingSortField(field="policies_sum", op="count", order='descending')),
@@ -112,7 +110,7 @@ def get_vulnerable_pages(number_of_pages: int) -> str:
     return chart
 
 
-def get_critic_users_spam(number_of_users: int) -> str:
+def get_critic_users_spam(number_of_users: int, cincuenta: bool) -> str:
     users_df = create_dataframe("users", ["nick", "passwd", "email_click", "email_total", "email_phishing"], None)
     usuarios_criticos_df = pd.DataFrame(columns=['nick', 'email_phishing', 'email_click'])
     for i in users_df['passwd'].index:
@@ -128,12 +126,17 @@ def get_critic_users_spam(number_of_users: int) -> str:
                                             usuarios_criticos_df["email_phishing"][index])
         else:
             usuarios_criticos_df._set_value(index, "prob_click", 0)
+    print(usuarios_criticos_df)
+    if(cincuenta):
+        usuarios_criticos_df = usuarios_criticos_df[usuarios_criticos_df['prob_click'] >= 0.5]
+    else:
+        usuarios_criticos_df = usuarios_criticos_df[usuarios_criticos_df['prob_click'] < 0.5]
     usuarios_criticos_df.sort_values(by=['prob_click'], ascending=False, inplace=True)
     source = usuarios_criticos_df.head(min(number_of_users, usuarios_criticos_df.shape[0]))
     chart = alt.Chart(source).mark_bar(cornerRadiusTopLeft=3,
                                        cornerRadiusTopRight=3).encode(
         x=alt.X('nick', sort='-y'),
-        y=alt.Y('prob_click', axis=alt.Axis(format='.0%'))
+        y=alt.Y('prob_click', axis=alt.Axis(format='.0%')),
     ).properties(
         width='container',
         height=400
@@ -141,6 +144,7 @@ def get_critic_users_spam(number_of_users: int) -> str:
         autosize="fit"
     ).to_json()
     return chart
+
 
 def get_vulnerabilities() -> str:
     fig = go.Figure(
