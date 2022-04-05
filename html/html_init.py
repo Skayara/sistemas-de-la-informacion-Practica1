@@ -42,7 +42,7 @@ def usuarios_criticos():
 
 @app.route('/paginasCriticas')
 def paginas_vulnerables():
-    return render_template('paginasVulnerables.html', graphJSON=plots.get_vulnerable_pages(5))
+    return render_template('paginasVulnerables.html', graphJSON=plots.get_vulnerable_pages(10))
 
 
 @app.route('/extra')
