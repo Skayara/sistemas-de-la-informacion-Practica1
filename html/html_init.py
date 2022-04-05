@@ -1,7 +1,7 @@
 import json
 import plots
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import plotly.graph_objects as go
 
 app = Flask(__name__)
@@ -19,7 +19,12 @@ def about_us():
 
 @app.route('/vulnerabilidades')
 def vulnerabilidades():
-    return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerabilities())
+    return render_template('vulnerabilidades.html')
+
+@app.route('/vulnerabilidades/', methods=["GET", "POST"])
+def vuln_number ():
+    num = int (request.args.get('number', -1))
+    return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerable_pages(num))
 
 
 
@@ -38,7 +43,12 @@ def login():
 
 @app.route('/usuariosCriticos')
 def usuarios_criticos():
-    return render_template('usuariosCriticos.html', graphJSON=plots.get_critic_users(10))
+    return render_template('usuariosCriticos.html')
+
+@app.route('/usuariosCriticos/')
+def usuarios_criticos_number():
+    num = int (request.args.get('number', -1))
+    return render_template('usuariosCriticos.html', graphJSON=plots.get_critic_users(num))
 
 @app.route('/usuariosCriticosC')
 def usuarios_criticos_c():

@@ -28,11 +28,11 @@
     <meta property="og:title" content="paginasVulnerables">
     <meta property="og:description" content="">
     <meta property="og:type" content="website">
-	  <!-- Import Vega & Vega-Lite (does not have to be from CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
-  <!-- Import vega-embed -->
-  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <!-- Import Vega & Vega-Lite (does not have to be from CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
+    <!-- Import vega-embed -->
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 </head>
 <body class="u-body u-xl-mode">
 <header class="u-clearfix u-grey-80 u-header u-header" id="sec-9c25">
@@ -98,10 +98,36 @@
         </nav>
     </div>
 </header>
+<section>
+    <form action="/vulnerabilidades/" method="GET">
+        <p>
+            Nº de usuarios vulnerables: <input type="range" min="1" max="10" list="tickmarks" id="number" name="number">
+            <datalist id="tickmarks">
+                <option value="0" label="0%">
+                <option value="1">
+                <option value="2">
+                <option value="3">
+                <option value="4">
+                <option value="5" label="50%">
+                <option value="6">
+                <option value="7">
+                <option value="8">
+                <option value="9">
+                <option value="10" label="100%">
+            </datalist>
+            <input type="submit" value="Enviar">
+        </p>
+    </form>
+</section>
 <section class="u-clearfix u-image u-section-1" id="sec-603c" data-image-width="1280" data-image-height="792">
     <div id="vis" style="width: 100%"></div>
     <script type="text/javascript">
-        var par = {{graphJSON | safe}};
+        var par = {
+        {
+            graphJSON | safe
+        }
+        }
+        ;
         var opt = {"renderer": "canvas", "actions": false};  /* Options for the embedding */
         vegaEmbed("#vis", par, opt);
     </script>
