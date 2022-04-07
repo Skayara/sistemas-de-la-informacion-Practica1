@@ -98,40 +98,18 @@
         </nav>
     </div>
 </header>
-<section>
-    <form action="/vulnerabilidades/" method="GET">
-        <p>
-            Nº de usuarios vulnerables: <input type="range" min="1" max="10" list="tickmarks" id="number" name="number">
-            <datalist id="tickmarks">
-                <option value="0" label="0%">
-                <option value="1">
-                <option value="2">
-                <option value="3">
-                <option value="4">
-                <option value="5" label="50%">
-                <option value="6">
-                <option value="7">
-                <option value="8">
-                <option value="9">
-                <option value="10" label="100%">
-            </datalist>
-            <input type="submit" value="Enviar">
-        </p>
-    </form>
-</section>
-<section class="u-clearfix u-image u-section-1" id="sec-603c" data-image-width="1280" data-image-height="792">
-    <div id="vis" style="width: 100%"></div>
-    <script type="text/javascript">
-        var par = {
-        {
-            graphJSON | safe
-        }
-        }
-        ;
-        var opt = {"renderer": "canvas", "actions": false};  /* Options for the embedding */
-        vegaEmbed("#vis", par, opt);
-    </script>
-</section>
+    <section class="u-align-center u-clearfix u-section-1" id="sec-0a6c">
+      <div class="u-align-left u-clearfix u-sheet u-sheet-1">
+        <div class="u-clearfix u-custom-html u-expanded-width u-custom-html-1">
+            <div id="vis" style="width: 100%; height: 100%"></div>
+            <script type="text/javascript">
+                var par = {{graphJSON | safe}};
+                var opt = {"renderer": "canvas", "actions": false};  /* Options for the embedding */
+                vegaEmbed("#vis", par, opt);
+            </script>
+            </div>
+      </div>
+    </section>
 
 
 <footer class="u-align-center u-clearfix u-footer u-grey-80 u-footer" id="sec-6126">

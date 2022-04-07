@@ -21,42 +21,39 @@ def about_us():
 def vulnerabilidades():
     return render_template('vulnerabilidades.html')
 
-@app.route('/vulnerabilidades/', methods=["GET", "POST"])
-def vuln_number ():
-    num = int (request.args.get('number', -1))
-    return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerable_pages(num))
-
-
 
 @app.route('/login')
 def login():
-    fig = go.Figure(
-        data=[go.Bar(y=[2, 1, 3])],
-        layout_title_text="Figura"
-    )
-    # fig.show()
-    import plotly
-    a = plotly.utils.PlotlyJSONEncoder
-    graphJSON = json.dumps(fig, cls=a)
     return render_template('login.html')
 
 
 @app.route('/usuariosCriticos')
 def usuarios_criticos():
-    return render_template('usuariosCriticos.html')
+    return render_template('usuariosCriticosSelect.html')
 
-@app.route('/usuariosCriticos/')
-def usuarios_criticos_number():
-    num = int (request.args.get('number', -1))
-    return render_template('usuariosCriticos.html', graphJSON=plots.get_critic_users(num))
 
-@app.route('/usuariosCriticosC')
+@app.route('/usuariosCriticosPlotted/')
 def usuarios_criticos_c():
-    return render_template('usuariosCriticos.html', graphJSON=plots.get_critic_users_spam(10, True))
+    num = int(request.args.get('number', default=1, type=int))
+    cincuenta = str(request.args.get('cincuenta', default="All", type=str))
+    print(cincuenta)
+    if cincuenta == "False":
+        return render_template('usuariosCriticos.html', graphJSON=plots.get_critic_users_spam(num, False))
+    elif cincuenta == "True":
+        return render_template('usuariosCriticos.html', graphJSON=plots.get_critic_users_spam(num, True))
+    else:
+        return render_template('usuariosCriticos.html', graphJSON=plots.get_critic_users(num))
 
-@app.route('/paginasCriticas')
+
+@app.route('/paginasCriticas/')
 def paginas_vulnerables():
-    return render_template('paginasVulnerables.html', graphJSON=plots.get_vulnerable_pages(10))
+    return render_template('paginasVulnerablesSelect.html')
+
+
+@app.route('/paginasCriticasPlotted/', methods=["GET", "POST"])
+def paginas_vulnerables_number ():
+    num = int (request.args.get('number', -1))
+    return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerable_pages(num))
 
 
 @app.route('/extra')
