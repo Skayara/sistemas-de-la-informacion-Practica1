@@ -1,4 +1,7 @@
 import json
+
+import requests as requests
+
 import plots
 
 from flask import Flask, render_template, request
@@ -19,7 +22,9 @@ def about_us():
 
 @app.route('/vulnerabilidades')
 def vulnerabilidades():
-    return render_template('vulnerabilidades.html')
+    url = 'https://cve.circl.lu/api/last'
+    response = requests.get(url).json()
+    return render_template('vulnerabilidades.html', graphJSON=response)
 
 
 @app.route('/login')
