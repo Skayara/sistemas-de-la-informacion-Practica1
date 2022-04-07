@@ -64,14 +64,14 @@ def get_critic_users(number_of_users: int) -> str:
     source = usuarios_criticos_df.head(min(number_of_users, usuarios_criticos_df.shape[0]))
     brush = alt.selection(type='interval', encodings=['x'])
     chart = alt.Chart().mark_bar(cornerRadiusTopLeft=3,
-                                       cornerRadiusTopRight=3).encode(
-        x=alt.X('nick', sort='-y'),
-        y=alt.Y('prob_click', axis=alt.Axis(format='.0%'))
+                                       cornerRadiusTopRight=3, color='#afdedc').encode(
+        x=alt.X('nick', sort='-y', axis=alt.Axis(title='Nick')),
+        y=alt.Y('prob_click', axis=alt.Axis(format='.0%',title='Probabilidad de click en un email de phishing'))
     ).add_selection(
         brush
     )
 
-    line = alt.Chart().mark_rule(color='firebrick').encode(
+    line = alt.Chart().mark_rule(color='#3e797b').encode(
         y='mean(prob_click):Q',
         size=alt.SizeValue(3)
     ).transform_filter(
@@ -107,11 +107,13 @@ def get_vulnerable_pages(number_of_pages: int) -> str:
                                         columns=['url', 'Lacks', 'value', 'policies_sum'])])
     # source = lacks_df.head(min(number_of_pages, lacks_df.shape[0]))
     source = lacks_df
+    domain = ['cookies', 'aviso', 'proteccion_datos']
+    range_ = ['#afdedc', '#3e797b', '#e8e597']
     chart = alt.Chart(source
                       ).mark_bar(cornerRadiusTopLeft=3, cornerRadiusTopRight=3).encode(
-        alt.X('url', sort=alt.EncodingSortField(field="policies_sum", op="count", order='descending')),
-        y='sum(value)',
-        color='Lacks'
+        x=alt.X('url', sort=alt.EncodingSortField(field="policies_sum", op="count", order='descending'), axis=alt.Axis(title='URL')),
+        y=alt.Y('sum(value)', axis=alt.Axis(title='Total de políticas desactualizadas')),
+        color=alt.Color('Lacks', legend=alt.Legend(title="Política desactualizada"), scale=alt.Scale(domain=domain, range=range_))
     ).properties(
         width='container',
         height=400
@@ -141,7 +143,7 @@ def get_critic_users_spam(number_of_users: int, cincuenta: bool) -> str:
                                             usuarios_criticos_df["email_phishing"][index])
         else:
             usuarios_criticos_df._set_value(index, "prob_click", 0)
-    if(cincuenta):
+    if cincuenta:
         usuarios_criticos_df = usuarios_criticos_df[usuarios_criticos_df['prob_click'] >= 0.5]
     else:
         usuarios_criticos_df = usuarios_criticos_df[usuarios_criticos_df['prob_click'] < 0.5]
@@ -149,14 +151,14 @@ def get_critic_users_spam(number_of_users: int, cincuenta: bool) -> str:
     source = usuarios_criticos_df.head(min(number_of_users, usuarios_criticos_df.shape[0]))
     brush = alt.selection(type='interval', encodings=['x'])
     chart = alt.Chart(source).mark_bar(cornerRadiusTopLeft=3,
-                                       cornerRadiusTopRight=3).encode(
-        x=alt.X('nick', sort='-y'),
-        y=alt.Y('prob_click', axis=alt.Axis(format='.0%')),
+                                       cornerRadiusTopRight=3, color='#afdedc').encode(
+        x=alt.X('nick', sort='-y', axis=alt.Axis(title='Nick')),
+        y=alt.Y('prob_click', axis=alt.Axis(format='.0%', title='Probabilidad de click en un email de phishing'))
     ).add_selection(
         brush
     )
 
-    line = alt.Chart().mark_rule(color='firebrick').encode(
+    line = alt.Chart().mark_rule(color='#3e797b').encode(
         y='mean(prob_click):Q',
         size=alt.SizeValue(3)
     ).transform_filter(
