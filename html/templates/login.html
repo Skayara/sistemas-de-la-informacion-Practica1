@@ -106,18 +106,18 @@
                         <h3 class="u-align-left u-text u-text-default-xs u-text-1">Login</h3>
                         <h6 class="u-align-left u-text u-text-default-xs u-text-2">Fill this form. Please</h6>
                         <div class="u-form u-login-control u-form-1">
-                            <form action="#" method="POST"
+                            <form action="/loginCheck" method="POST"
                                   class="u-clearfix u-form-custom-backend u-form-spacing-19 u-form-vertical u-inner-form"
                                   source="custom" name="form" style="padding: 10px;">
                                 <div class="u-form-group u-form-name">
                                     <label for="username-8f79" class="u-form-control-hidden u-label">0</label>
-                                    <input type="text" placeholder="Name" id="username-8f79" name="username"
+                                    <input type="text" placeholder={{user | safe}} id="username-8f79" name="username"
                                            class="u-border-1 u-border-black u-input u-input-rectangle u-radius-10 u-white"
                                            required="">
                                 </div>
                                 <div class="u-form-group u-form-password">
                                     <label for="password-8f79" class="u-form-control-hidden u-label">0</label>
-                                    <input type="text" placeholder="Pass" id="password-8f79" name="password"
+                                    <input type="password" placeholder={{passwd | safe}} id="password-8f79" name="password"
                                            class="u-border-1 u-border-black u-input u-input-rectangle u-radius-10 u-white"
                                            required="">
                                 </div>

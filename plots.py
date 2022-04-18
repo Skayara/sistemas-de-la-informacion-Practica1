@@ -2,10 +2,10 @@ import hashlib
 import json
 import sqlite3
 from typing import List
-
+import plotly.graph_objects as go
 import altair as alt
 import pandas as pd
-import plotly.graph_objects as go
+import requests as requests
 
 con = sqlite3.connect('resources/practicaSI.db', check_same_thread=False)
 cur = con.cursor()
@@ -64,9 +64,9 @@ def get_critic_users(number_of_users: int) -> str:
     source = usuarios_criticos_df.head(min(number_of_users, usuarios_criticos_df.shape[0]))
     brush = alt.selection(type='interval', encodings=['x'])
     chart = alt.Chart().mark_bar(cornerRadiusTopLeft=3,
-                                       cornerRadiusTopRight=3, color='#afdedc').encode(
+                                 cornerRadiusTopRight=3, color='#afdedc').encode(
         x=alt.X('nick', sort='-y', axis=alt.Axis(title='Nick')),
-        y=alt.Y('prob_click', axis=alt.Axis(format='.0%',title='Probabilidad de click en un email de phishing'))
+        y=alt.Y('prob_click', axis=alt.Axis(format='.0%', title='Probabilidad de click en un email de phishing'))
     ).add_selection(
         brush
     )
@@ -111,9 +111,11 @@ def get_vulnerable_pages(number_of_pages: int) -> str:
     range_ = ['#afdedc', '#3e797b', '#e8e597']
     chart = alt.Chart(source
                       ).mark_bar(cornerRadiusTopLeft=3, cornerRadiusTopRight=3).encode(
-        x=alt.X('url', sort=alt.EncodingSortField(field="policies_sum", op="count", order='descending'), axis=alt.Axis(title='URL')),
+        x=alt.X('url', sort=alt.EncodingSortField(field="policies_sum", op="count", order='descending'),
+                axis=alt.Axis(title='URL')),
         y=alt.Y('sum(value)', axis=alt.Axis(title='Total de políticas desactualizadas')),
-        color=alt.Color('Lacks', legend=alt.Legend(title="Política desactualizada"), scale=alt.Scale(domain=domain, range=range_))
+        color=alt.Color('Lacks', legend=alt.Legend(title="Política desactualizada"),
+                        scale=alt.Scale(domain=domain, range=range_))
     ).properties(
         width='container',
         height=400
@@ -173,7 +175,22 @@ def get_critic_users_spam(number_of_users: int, cincuenta: bool) -> str:
     ).to_json()
 
 
+# Todo
+def json_to_dataframe(json):
+    return pd.DataFrame(data=json)
+
+
 def get_vulnerabilities() -> str:
+    url = 'https://cve.circl.lu/api/last'
+    response = requests.get(url).json()
+    df = json_to_dataframe(response)
+    return alt.Chart(df).encode(
+        x='name',
+        y='id'
+    ).to_json()
+
+
+def get_surprise():
     fig = go.Figure(
         data=[go.Bar(y=[2, 1, 3])],
         layout_title_text="Figura"
