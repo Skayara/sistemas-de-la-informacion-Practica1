@@ -35,6 +35,11 @@ def login(bad=0):
 def about_us():
     return render_template('aboutUs.html')
 
+"""
+Disclaimer: esta no es la forma correcta de comprobar si alguien ha iniciado sesion y es muy inseguro.
+Para mejorarlo y hacerlo de una manera mas segura, hay que definir una clase User, crear un user_loader, etc
+y usar la decoracion @login_required u otra de las alternativas que flask ofrece
+"""
 
 @app.route('/vulnerabilidades')
 def vulnerabilidades():
