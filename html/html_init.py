@@ -54,7 +54,7 @@ def vulnerabilidades():
 
 @app.route('/usuariosCriticos')
 def usuarios_criticos():
-    if session.get('logged_in'):
+    if not session.get('logged_in'):
         return render_template('usuariosCriticosSelect.html')
     else:
         return login(0)
@@ -95,7 +95,7 @@ def paginas_vulnerables_number():
 
 @app.route('/extra')
 def extra():
-    if session.get('logged_in'):
+    if not session.get('logged_in'):
         return render_template('extra.html', graphJSON=plots.get_surprise())
     else:
         return login(0)

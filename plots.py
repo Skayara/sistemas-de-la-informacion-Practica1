@@ -67,13 +67,18 @@ def get_vulnerable_pages(number_of_pages: int) -> str:
     source = lacks_df
     domain = ['cookies', 'aviso', 'proteccion_datos']
     range_ = ['#afdedc', '#3e797b', '#e8e597']
+    print(lacks_df.columns)
+    selection = alt.selection_multi(fields=['Lacks'], bind='legend')
     chart = alt.Chart(source
                       ).mark_bar(cornerRadiusTopLeft=3, cornerRadiusTopRight=3).encode(
         x=alt.X('url', sort=alt.EncodingSortField(field="policies_sum", op="count", order='descending'),
                 axis=alt.Axis(title='URL')),
         y=alt.Y('sum(value)', axis=alt.Axis(title='Total de políticas desactualizadas')),
         color=alt.Color('Lacks', legend=alt.Legend(title="Política desactualizada"),
-                        scale=alt.Scale(domain=domain, range=range_))
+                        scale=alt.Scale(domain=domain, range=range_)),
+        opacity=alt.condition(selection, alt.value(1), alt.value(0))
+    ).add_selection(
+        selection
     ).properties(
         width='container',
         height=400
@@ -88,7 +93,6 @@ def get_vulnerable_pages(number_of_pages: int) -> str:
 def get_critic_users_df():
     users_df = create_dataframe("users", ["nick", "passwd", "email_click", "email_total", "email_phishing", "telefono",
                                           "permisos"], None)
-    print("Users", users_df)
     usuarios_criticos_df = pd.DataFrame(columns=['nick', 'email_phishing', 'email_click', 'telefono', 'permisos'])
     for i in users_df['passwd'].index:
         f = open("resources/smallRockYou.txt", "rt")
@@ -103,10 +107,8 @@ def get_critic_users_df():
                                             usuarios_criticos_df["email_phishing"][index])
         else:
             usuarios_criticos_df._set_value(index, "prob_click", 0)
-    print("Before", usuarios_criticos_df)
     usuarios_criticos_df['permisos'] = usuarios_criticos_df['permisos'].replace(0, "No admin")
     usuarios_criticos_df['permisos'] = usuarios_criticos_df['permisos'].replace(1, "Admin")
-    print("After", usuarios_criticos_df)
     return usuarios_criticos_df
 
 
