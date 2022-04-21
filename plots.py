@@ -2,12 +2,12 @@ import hashlib
 import json
 import sqlite3
 from typing import List
-import plotly.graph_objects as go
+
 import altair as alt
 import pandas as pd
 import plotly
+import plotly.graph_objects as go
 import requests as requests
-from numpy import NaN, nan
 
 con = sqlite3.connect('resources/practicaSI.db', check_same_thread=False)
 cur = con.cursor()
@@ -42,50 +42,6 @@ def create_dataframe(table: str, columns: list[str], condition: object) -> pd.Da
 """
 Plot generation functions
 """
-
-
-def get_critic_users(number_of_users: int) -> str:
-    table_size = cur.execute("SELECT count(nick) FROM users").fetchone()[0]
-    number_of_users = min(table_size, number_of_users)
-    users_df = create_dataframe("users", ["nick", "passwd", "email_click", "email_total", "email_phishing"], None)
-    usuarios_criticos_df = pd.DataFrame(columns=['nick', 'email_phishing', 'email_click'])
-    for i in users_df['passwd'].index:
-        f = open("resources/smallRockYou.txt", "rt")
-        for line in f.readlines():
-            p = hashlib.md5(line.strip("\n").encode('utf-8')).hexdigest()
-            if users_df['passwd'][i] == str(p):
-                usuarios_criticos_df.loc[len(usuarios_criticos_df.index)] = users_df.loc[
-                    i, ['nick', 'email_phishing', 'email_click']]
-    for index in usuarios_criticos_df['email_phishing'].index:
-        if usuarios_criticos_df["email_phishing"][index] != 0:
-            usuarios_criticos_df._set_value(index, "prob_click", usuarios_criticos_df["email_click"][index] /
-                                            usuarios_criticos_df["email_phishing"][index])
-        else:
-            usuarios_criticos_df._set_value(index, "prob_click", 0)
-    usuarios_criticos_df.sort_values(by=['prob_click'], ascending=False, inplace=True)
-    source = usuarios_criticos_df.head(min(number_of_users, usuarios_criticos_df.shape[0]))
-    brush = alt.selection(type='interval', encodings=['x'])
-    chart = alt.Chart().mark_bar(cornerRadiusTopLeft=3,
-                                 cornerRadiusTopRight=3, color='#afdedc').encode(
-        x=alt.X('nick', sort='-y', axis=alt.Axis(title='Nick')),
-        y=alt.Y('prob_click', axis=alt.Axis(format='.0%', title='Probabilidad de click en un email de phishing'))
-    ).add_selection(
-        brush
-    )
-
-    line = alt.Chart().mark_rule(color='#3e797b').encode(
-        y='mean(prob_click):Q',
-        size=alt.SizeValue(3)
-    ).transform_filter(
-        brush
-    )
-
-    return alt.layer(chart, line, data=source).properties(
-        width='container',
-        height=400
-    ).configure(
-        autosize="fit"
-    ).to_json()
 
 
 def get_vulnerable_pages(number_of_pages: int) -> str:
@@ -129,35 +85,76 @@ def get_vulnerable_pages(number_of_pages: int) -> str:
     return chart
 
 
-def get_critic_users_spam(number_of_users: int, cincuenta: bool) -> str:
-    table_size = cur.execute("SELECT count(url) FROM legal").fetchone()[0]
-    number_of_users = min(table_size, number_of_users)
-    users_df = create_dataframe("users", ["nick", "passwd", "email_click", "email_total", "email_phishing"], None)
-    usuarios_criticos_df = pd.DataFrame(columns=['nick', 'email_phishing', 'email_click'])
+def get_critic_users_df():
+    users_df = create_dataframe("users", ["nick", "passwd", "email_click", "email_total", "email_phishing", "telefono",
+                                          "permisos"], None)
+    print("Users", users_df)
+    usuarios_criticos_df = pd.DataFrame(columns=['nick', 'email_phishing', 'email_click', 'telefono', 'permisos'])
     for i in users_df['passwd'].index:
         f = open("resources/smallRockYou.txt", "rt")
         for line in f.readlines():
             p = hashlib.md5(line.strip("\n").encode('utf-8')).hexdigest()
             if users_df['passwd'][i] == str(p):
                 usuarios_criticos_df.loc[len(usuarios_criticos_df.index)] = users_df.loc[
-                    i, ['nick', 'email_phishing', 'email_click']]
+                    i, ['nick', 'email_phishing', 'email_click', 'telefono', 'permisos']]
     for index in usuarios_criticos_df['email_phishing'].index:
         if usuarios_criticos_df["email_phishing"][index] != 0:
             usuarios_criticos_df._set_value(index, "prob_click", usuarios_criticos_df["email_click"][index] /
                                             usuarios_criticos_df["email_phishing"][index])
         else:
             usuarios_criticos_df._set_value(index, "prob_click", 0)
+    print("Before", usuarios_criticos_df)
+    usuarios_criticos_df['permisos'] = usuarios_criticos_df['permisos'].replace(0, "No admin")
+    usuarios_criticos_df['permisos'] = usuarios_criticos_df['permisos'].replace(1, "Admin")
+    print("After", usuarios_criticos_df)
+    return usuarios_criticos_df
+
+
+def get_critic_users(number_of_users: int) -> str:
+    table_size = cur.execute("SELECT count(nick) FROM users").fetchone()[0]
+    number_of_users = min(table_size, number_of_users)
+    usuarios_criticos_df = get_critic_users_df()
+    print(usuarios_criticos_df.columns)
+    usuarios_criticos_df.sort_values(by=['prob_click'], ascending=False, inplace=True)
+    source = usuarios_criticos_df.head(min(number_of_users, usuarios_criticos_df.shape[0]))
+    brush = alt.selection(type='interval', encodings=['x'])
+    chart = alt.Chart().mark_bar(cornerRadiusTopLeft=3,
+                                 cornerRadiusTopRight=3, color='#afdedc').encode(
+        x=alt.X('nick', sort='-y', axis=alt.Axis(title='Nick')),
+        y=alt.Y('prob_click', axis=alt.Axis(format='.0%', title='Probabilidad de click en un email de phishing')),
+        tooltip=['nick', 'permisos', 'telefono']
+    ).add_selection(
+        brush
+    )
+    line = alt.Chart().mark_rule(color='#3e797b').encode(
+        y='mean(prob_click):Q',
+        size=alt.SizeValue(3)
+    ).transform_filter(
+        brush
+    )
+    return alt.layer(chart, line, data=source).properties(
+        width='container',
+        height=400
+    ).configure(
+        autosize="fit"
+    ).to_json()
+
+
+def get_critic_users_spam(number_of_users: int, cincuenta: bool) -> str:
+    usuarios_criticos_df = get_critic_users_df()
     if cincuenta:
         usuarios_criticos_df = usuarios_criticos_df[usuarios_criticos_df['prob_click'] >= 0.5]
     else:
         usuarios_criticos_df = usuarios_criticos_df[usuarios_criticos_df['prob_click'] < 0.5]
     usuarios_criticos_df.sort_values(by=['prob_click'], ascending=False, inplace=True)
+    print(usuarios_criticos_df.columns)
     source = usuarios_criticos_df.head(min(number_of_users, usuarios_criticos_df.shape[0]))
     brush = alt.selection(type='interval', encodings=['x'])
     chart = alt.Chart(source).mark_bar(cornerRadiusTopLeft=3,
                                        cornerRadiusTopRight=3, color='#afdedc').encode(
         x=alt.X('nick', sort='-y', axis=alt.Axis(title='Nick')),
-        y=alt.Y('prob_click', axis=alt.Axis(format='.0%', title='Probabilidad de click en un email de phishing'))
+        y=alt.Y('prob_click', axis=alt.Axis(format='.0%', title='Probabilidad de click en un email de phishing')),
+        tooltip=['nick', 'permisos', 'telefono']
     ).add_selection(
         brush
     )
@@ -177,7 +174,6 @@ def get_critic_users_spam(number_of_users: int, cincuenta: bool) -> str:
     ).to_json()
 
 
-# Todo
 def json_to_dataframe(json_data):
     df = pd.DataFrame(json_data, columns=['Modified', 'Published', 'id', 'cvss'])
     df['cvss'] = df['cvss'].fillna(0)

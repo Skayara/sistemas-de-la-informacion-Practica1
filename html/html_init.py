@@ -35,11 +35,14 @@ def login(bad=0):
 def about_us():
     return render_template('aboutUs.html')
 
+
+# TODO
 """
 Disclaimer: esta no es la forma correcta de comprobar si alguien ha iniciado sesion y es muy inseguro.
 Para mejorarlo y hacerlo de una manera mas segura, hay que definir una clase User, crear un user_loader, etc
 y usar la decoracion @login_required u otra de las alternativas que flask ofrece
 """
+
 
 @app.route('/vulnerabilidades')
 def vulnerabilidades():
@@ -59,7 +62,7 @@ def usuarios_criticos():
 
 @app.route('/usuariosCriticosPlotted/')
 def usuarios_criticos_c():
-    if session.get('logged_in'):
+    if not session.get('logged_in'):
         num = int(request.args.get('number', default=1, type=int))
         cincuenta = str(request.args.get('cincuenta', default="All", type=str))
         print(cincuenta)
