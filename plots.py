@@ -47,22 +47,23 @@ Plot generation functions
 def get_vulnerable_pages(number_of_pages: int) -> str:
     table_size = cur.execute("SELECT count(url) FROM legal").fetchone()[0]
     number_of_pages = min(table_size, number_of_pages)
-    legal_politicas_df = create_dataframe("legal", ["url", "cookies", "aviso", "proteccion_datos", "policies_sum"],
+    legal_politicas_df = create_dataframe("legal", ["url", "cookies", "aviso", "proteccion_datos", "policies_sum", "creacion"],
                                           "ORDER BY policies_sum ASC LIMIT " + str(number_of_pages))
-    lacks_df = pd.DataFrame(columns=['url', 'Lacks', 'value', 'policies_sum'])
+    lacks_df = pd.DataFrame(columns=['url', 'Lacks', 'value', 'policies_sum', 'year'])
     for index in legal_politicas_df['url'].index:
         url = legal_politicas_df['url'][index]
+        year = legal_politicas_df['creacion'][index]
         policies_sum = legal_politicas_df['policies_sum'][index]
         if legal_politicas_df['cookies'][index] == 0:
-            lacks_df = pd.concat([lacks_df, pd.DataFrame([[url, 'cookies', 1, policies_sum]],
-                                                         columns=['url', 'Lacks', 'value', 'policies_sum'])])
+            lacks_df = pd.concat([lacks_df, pd.DataFrame([[url, 'cookies', 1, policies_sum, year]],
+                                                         columns=['url', 'Lacks', 'value', 'policies_sum', 'year'])])
         if legal_politicas_df['aviso'][index] == 0:
-            lacks_df = pd.concat([lacks_df, pd.DataFrame([[url, 'aviso', 1, policies_sum]],
-                                                         columns=['url', 'Lacks', 'value', 'policies_sum'])])
+            lacks_df = pd.concat([lacks_df, pd.DataFrame([[url, 'aviso', 1, policies_sum, year]],
+                                                         columns=['url', 'Lacks', 'value', 'policies_sum', 'year'])])
         if legal_politicas_df['proteccion_datos'][index] == 0:
             lacks_df = pd.concat(
-                [lacks_df, pd.DataFrame([[url, 'proteccion_datos', 1, policies_sum]],
-                                        columns=['url', 'Lacks', 'value', 'policies_sum'])])
+                [lacks_df, pd.DataFrame([[url, 'proteccion_datos', 1, policies_sum, year]],
+                                        columns=['url', 'Lacks', 'value', 'policies_sum', 'year'])])
     # source = lacks_df.head(min(number_of_pages, lacks_df.shape[0]))
     source = lacks_df
     domain = ['cookies', 'aviso', 'proteccion_datos']
@@ -76,7 +77,8 @@ def get_vulnerable_pages(number_of_pages: int) -> str:
         y=alt.Y('sum(value)', axis=alt.Axis(title='Total de políticas desactualizadas')),
         color=alt.Color('Lacks', legend=alt.Legend(title="Política desactualizada"),
                         scale=alt.Scale(domain=domain, range=range_)),
-        opacity=alt.condition(selection, alt.value(1), alt.value(0))
+        opacity=alt.condition(selection, alt.value(1), alt.value(0)),
+        tooltip=['url', 'year']
     ).add_selection(
         selection
     ).properties(
