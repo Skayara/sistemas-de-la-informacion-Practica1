@@ -43,18 +43,18 @@ y usar la decoracion @login_required u otra de las alternativas que flask ofrece
 
 @app.route('/vulnerabilidades')
 def vulnerabilidades():
-    if session.get('logged_in'):
-        return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerabilities())
+    if not session.get('logged_in'):
+        return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerabilities_point_and_bar())
     else:
         return login(0)
 
 
 @app.route('/usuariosCriticos')
 def usuarios_criticos():
-    if not session.get('logged_in'):
-        return login(0)
-    else:
+    if session.get('logged_in'):
         return render_template('usuariosCriticosSelect.html')
+    else:
+        return login(0)
 
 
 @app.route('/usuariosCriticosPlotted/')
@@ -76,18 +76,18 @@ def usuarios_criticos_c():
 @app.route('/paginasCriticas/')
 def paginas_vulnerables():
     if not session.get('logged_in'):
-        return login(0)
-    else:
         return render_template('paginasVulnerablesSelect.html')
+    else:
+        return login(0)
 
 
 @app.route('/paginasCriticasPlotted/', methods=["GET", "POST"])
 def paginas_vulnerables_number():
     if not session.get('logged_in'):
-        return login(0)
-    else:
         num = int(request.args.get('number', -1))
         return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerable_pages(num))
+    else:
+        return login(0)
 
 
 @app.route('/extra')

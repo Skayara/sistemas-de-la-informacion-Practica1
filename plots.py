@@ -5,7 +5,9 @@ from typing import List
 import plotly.graph_objects as go
 import altair as alt
 import pandas as pd
+import plotly
 import requests as requests
+from numpy import NaN, nan
 
 con = sqlite3.connect('resources/practicaSI.db', check_same_thread=False)
 cur = con.cursor()
@@ -176,17 +178,71 @@ def get_critic_users_spam(number_of_users: int, cincuenta: bool) -> str:
 
 
 # Todo
-def json_to_dataframe(json):
-    return pd.DataFrame(data=json)
+def json_to_dataframe(json_data):
+    df = pd.DataFrame(json_data, columns=['Modified', 'Published', 'id', 'cvss'])
+    df['cvss'] = df['cvss'].fillna(0)
+    df = df.sort_values(by='Published', ascending=False)
+    print(df)
+    return df.head(30)
 
 
 def get_vulnerabilities() -> str:
     url = 'https://cve.circl.lu/api/last'
     response = requests.get(url).json()
     df = json_to_dataframe(response)
-    return alt.Chart(df).encode(
-        x='name',
-        y='id'
+    domain = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    range_ = ['#ff0000', '#ffa500', '#ffff00', '#cae00d', '#00ff00', '#3cb371', '#008080', '#008b8b', '#4682b4',
+              '#191970', '#808080']
+    return alt.Chart(df).mark_bar(cornerRadiusTopLeft=3, cornerRadiusTopRight=3).encode(
+        y=alt.Y('Published', axis=alt.Axis(title='Date published')),
+        x=alt.X('id', sort=alt.EncodingSortField(field="cvss", op="count", order='descending'),
+                axis=alt.Axis(title='CVE name')),
+        color=alt.Color('cvss', legend=alt.Legend(title="CVSS"),
+                        scale=alt.Scale(domain=domain, range=range_)),
+        tooltip=['id', 'cvss', 'Published', 'Modified']
+    ).properties(
+        width='container',
+        height=400
+    ).configure(
+        autosize="fit"
+    ).interactive().to_json()
+
+
+def get_vulnerabilities_point_and_bar() -> str:
+    url = 'https://cve.circl.lu/api/last'
+    response = requests.get(url).json()
+    source = json_to_dataframe(response)
+    domain = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    range_ = ['#ff0000', '#ffa500', '#ffff00', '#cae00d', '#00ff00', '#3cb371', '#008080', '#008b8b', '#4682b4',
+              '#191970', '#808080']
+    brush = alt.selection(type='interval')
+    points = alt.Chart(source).mark_point().encode(
+        x='Published',
+        y='Modified',
+        color=alt.Color('cvss', legend=alt.Legend(title="CVSS"),
+                        scale=alt.Scale(domain=domain, range=range_)),
+        tooltip=['id', 'cvss', 'Published', 'Modified']
+    ).add_selection(
+        brush
+    ).interactive().properties(
+        width=500,
+        height=400
+    )
+    bars = alt.Chart(source).mark_bar().encode(
+        y='cvss',
+        color=alt.Color('cvss', legend=alt.Legend(title="CVSS"),
+                        scale=alt.Scale(domain=domain, range=range_)),
+        x=alt.X('id', sort=alt.EncodingSortField(field="cvss", op="count", order='descending'),
+                axis=alt.Axis(title='CVE name'))
+    ).transform_filter(
+        brush
+    ).properties(
+        width=500,
+        height=400
+    )
+    return alt.HConcatChart(
+        data=source, hconcat=[points, bars], center=True,
+        title="Last 10 vulnerabilities in CVE"
     ).to_json()
 
 
@@ -195,7 +251,5 @@ def get_surprise():
         data=[go.Bar(y=[2, 1, 3])],
         layout_title_text="Figura"
     )
-    # fig.show()
-    import plotly
     a = plotly.utils.PlotlyJSONEncoder
     return json.dumps(fig, cls=a)
