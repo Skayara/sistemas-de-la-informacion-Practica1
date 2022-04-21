@@ -26,9 +26,9 @@ def login_check():
 @app.route('/login')
 def login(bad=0):
     if bad is None or bad != 1:
-        return render_template('login.html', user="Name", passwd="Pass")
+        return render_template('login.html', user="Name", passwd="Pass", not_a_flag=" ")
     else:
-        return render_template('login.html', user="potatoesAreCool", passwd="adminSecretPass")
+        return render_template('login.html', user="potatoesAreCool", passwd="adminSecretPass", not_a_flag="Q2xpY2sgcGFyYSBnYW5hciB1biBpUGhvbmUuIFBvbmVyIGxhIG1pc21hIGNvbnRyYXNl8WEgcGFyYSB0b2RvcyBsb3MgYXJjaGl2b3Mgbm8gZXMgdW5hIGJ1ZW5hIGlkZWEu")
 
 
 @app.route('/aboutUs')
