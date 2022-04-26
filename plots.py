@@ -9,7 +9,8 @@ import plotly
 import plotly.graph_objects as go
 import requests as requests
 
-con = sqlite3.connect('resources/practicaSI.db', check_same_thread=False)
+
+con = sqlite3.connect('C:\\Users\\eilee\\Desktop\\pythonProject\\resources\\practicaSI.db', check_same_thread=False)
 cur = con.cursor()
 
 """
@@ -253,3 +254,58 @@ def get_surprise():
     )
     a = plotly.utils.PlotlyJSONEncoder
     return json.dumps(fig, cls=a)
+
+"""
+Machine Learning
+"""
+"""
+# REGRESION LINEAL
+#https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html?highlight=linear%20regression#sklearn.linear_model.LinearRegression
+import numpy as np
+from sklearn.linear_model import LinearRegression
+X = np.array([[1, 1], [1, 2], [2, 2], [2, 3]])
+# y = 1 * x_0 + 2 * x_1 + 3
+y = np.dot(X, np.array([1, 2])) + 3
+reg = LinearRegression().fit(X, y)
+reg.score(X, y)
+
+reg.coef_
+
+reg.intercept_
+
+reg.predict(np.array([[3, 5]]))
+
+# Plot outputs
+plt.scatter(x, y, color="black")
+plt.plot(x, diabetes_y_pred, color="blue", linewidth=3)
+
+plt.xticks(())
+plt.yticks(())
+
+plt.show()
+
+# DECISION TREE
+#https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html?highlight=decision%20tree#sklearn.tree.DecisionTreeClassifier
+from sklearn.datasets import load_iris
+from sklearn.model_selection import cross_val_score
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
+clf = DecisionTreeClassifier(random_state=0)
+iris = load_iris()
+cross_val_score(clf, iris.data, iris.target, cv=10)
+
+tree.plot_tree(clf)
+
+# RANDOM FOREST
+#https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html?highlight=random%20forest#sklearn.ensemble.RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import make_classification
+X, y = make_classification(n_samples=1000, n_features=4,
+                           n_informative=2, n_redundant=0,
+                           random_state=0, shuffle=False)
+clf = RandomForestClassifier(max_depth=2, random_state=0)
+clf.fit(X, y)
+
+print(clf.predict([[0, 0, 0, 0]]))
+
+"""
