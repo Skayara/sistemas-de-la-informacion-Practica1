@@ -110,12 +110,14 @@ Graph pages
 
 
 @app.route('/vulnerabilidadesPlotted', methods=["GET", "POST"])
+@login_required
 def vulnerabilidades_plotted(loginout_value='Logout', loginout_url_value='logout'):
     num = int(request.args.get('number', default=10, type=int))
     return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerabilities_point_and_bar(num),
                            loginout=loginout_value, loginouturl=loginout_url_value)
 
 @app.route('/vulnerabilidades')
+@login_required
 def vulnerabilidades(loginout_value='Logout', loginout_url_value='logout'):
     return render_template('vulnerabilidadesSelect.html', loginout=loginout_value, loginouturl=loginout_url_value)
 
