@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 import requests as requests
 
 
-con = sqlite3.connect('C:\\Users\\eilee\\Desktop\\pythonProject\\resources\\practicaSI.db', check_same_thread=False)
+con = sqlite3.connect('../resources/practicaSI.db', check_same_thread=False)
 cur = con.cursor()
 
 """
@@ -98,7 +98,7 @@ def get_critic_users_df():
                                           "permisos"], None)
     usuarios_criticos_df = pd.DataFrame(columns=['nick', 'email_phishing', 'email_click', 'telefono', 'permisos'])
     for i in users_df['passwd'].index:
-        f = open("resources/smallRockYou.txt", "rt")
+        f = open("../resources/smallRockYou.txt", "rt")
         for line in f.readlines():
             p = hashlib.md5(line.strip("\n").encode('utf-8')).hexdigest()
             if users_df['passwd'][i] == str(p):
@@ -245,15 +245,6 @@ def get_vulnerabilities_point_and_bar() -> str:
         data=source, hconcat=[points, bars], center=True,
         title="Last 10 vulnerabilities in CVE"
     ).to_json()
-
-
-def get_surprise():
-    fig = go.Figure(
-        data=[go.Bar(y=[2, 1, 3])],
-        layout_title_text="Figura"
-    )
-    a = plotly.utils.PlotlyJSONEncoder
-    return json.dumps(fig, cls=a)
 
 """
 Machine Learning

@@ -57,7 +57,7 @@
                 <ul class="u-nav u-unstyled u-nav-1">
                     <li class="u-nav-item"><a
                             class="u-button-style u-nav-link u-text-active-white u-text-hover-palette-2-base"
-                            href="http://127.0.0.1:5000/login" style="padding: 10px 20px;">Login</a>
+                            href="http://127.0.0.1:5000/{{loginouturl | safe}}" style="padding: 10px 20px;">{{loginout | safe}}</a>
                     </li>
                     <li class="u-nav-item"><a
                             class="u-button-style u-nav-link u-text-active-white u-text-hover-palette-2-base"
@@ -76,7 +76,7 @@
                         <div class="u-menu-close"></div>
                         <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2">
                             <li class="u-nav-item"><a class="u-button-style u-nav-link"
-                                                      href="http://127.0.0.1:5000/login">Login</a>
+                                                      href="http://127.0.0.1:5000/{{loginouturl | safe}}">{{loginout | safe}}</a>
                             </li>
                             <li class="u-nav-item"><a class="u-button-style u-nav-link"
                                                       href="http://127.0.0.1:5000/aboutUs">About Us</a>
@@ -107,9 +107,12 @@
                         <h3 class="u-align-left u-text u-text-default-xs u-text-1">Login</h3>
                         <h6 class="u-align-left u-text u-text-default-xs u-text-2">Fill this form. Please</h6>
                         <div class="u-form u-login-control u-form-1">
+                            {% block title %}Login{% endblock %}
+                            {% block content %}
                             <form action="/loginCheck" method="POST"
-                                  class="u-clearfix u-form-custom-backend u-form-spacing-19 u-form-vertical u-inner-form"
-                                  source="custom" name="form" style="padding: 10px;">
+                                class="u-clearfix u-form-custom-backend u-form-spacing-19 u-form-vertical u-inner-form"
+                                source="custom" name="form" style="padding: 10px;">
+                                {{ form.hidden_tag() }}
                                 <div class="u-form-group u-form-name">
                                     <label for="username-8f79" class="u-form-control-hidden u-label">0</label>
                                     <input type="text" placeholder={{user | safe}} id="username-8f79" name="username"
@@ -122,10 +125,11 @@
                                            class="u-border-1 u-border-black u-input u-input-rectangle u-radius-10 u-white"
                                            required="">
                                 </div>
-                                <div class="u-form-checkbox u-form-group">
+                                <!--<div class="u-form-checkbox u-form-group">
                                     <input type="checkbox" id="checkbox-8f79" name="remember" value="On">
                                     <label for="checkbox-8f79" class="u-label">Remember me</label>
-                                </div>
+                                </div>-->
+                                <div>{{ form.remember_me() }} {{ form.remember_me.label }}</div>
                                 <div class="u-align-center u-form-group u-form-submit">
                                     <a href="#"
                                        class="u-border-2 u-border-black u-btn u-btn-round u-btn-submit u-button-style u-hover-black u-none u-radius-15 u-text-black u-text-hover-white u-btn-1">Login</a>
@@ -133,6 +137,7 @@
                                 </div>
                                 <input type="hidden" value="" name="recaptchaResponse">
                             </form>
+                            {% endblock %}
                         </div>
                     </div>
                 </div>
