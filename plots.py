@@ -9,7 +9,6 @@ import plotly
 import plotly.graph_objects as go
 import requests as requests
 
-
 con = sqlite3.connect('../resources/practicaSI.db', check_same_thread=False)
 cur = con.cursor()
 
@@ -48,7 +47,8 @@ Plot generation functions
 def get_vulnerable_pages(number_of_pages: int) -> str:
     table_size = cur.execute("SELECT count(url) FROM legal").fetchone()[0]
     number_of_pages = min(table_size, number_of_pages)
-    legal_politicas_df = create_dataframe("legal", ["url", "cookies", "aviso", "proteccion_datos", "policies_sum", "creacion"],
+    legal_politicas_df = create_dataframe("legal",
+                                          ["url", "cookies", "aviso", "proteccion_datos", "policies_sum", "creacion"],
                                           "ORDER BY policies_sum ASC LIMIT " + str(number_of_pages))
     lacks_df = pd.DataFrame(columns=['url', 'Lacks', 'value', 'policies_sum', 'year'])
     for index in legal_politicas_df['url'].index:
@@ -179,18 +179,18 @@ def get_critic_users_spam(number_of_users: int, cincuenta: bool) -> str:
     ).to_json()
 
 
-def json_to_dataframe(json_data):
+def json_to_dataframe(json_data, number_of_vuln: int):
     df = pd.DataFrame(json_data, columns=['Modified', 'Published', 'id', 'cvss'])
     df['cvss'] = df['cvss'].fillna(0)
     df = df.sort_values(by='Published', ascending=False)
     print(df)
-    return df.head(30)
+    return df.head(number_of_vuln)
 
 
-def get_vulnerabilities() -> str:
+def get_vulnerabilities(number_of_vuln: int) -> str:
     url = 'https://cve.circl.lu/api/last'
     response = requests.get(url).json()
-    df = json_to_dataframe(response)
+    df = json_to_dataframe(response, number_of_vuln)
     domain = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
     range_ = ['#ff0000', '#ffa500', '#ffff00', '#cae00d', '#00ff00', '#3cb371', '#008080', '#008b8b', '#4682b4',
               '#191970', '#808080']
@@ -209,10 +209,10 @@ def get_vulnerabilities() -> str:
     ).interactive().to_json()
 
 
-def get_vulnerabilities_point_and_bar() -> str:
+def get_vulnerabilities_point_and_bar(number_of_vuln: int) -> str:
     url = 'https://cve.circl.lu/api/last'
     response = requests.get(url).json()
-    source = json_to_dataframe(response)
+    source = json_to_dataframe(response, number_of_vuln)
     domain = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
     range_ = ['#ff0000', '#ffa500', '#ffff00', '#cae00d', '#00ff00', '#3cb371', '#008080', '#008b8b', '#4682b4',
               '#191970', '#808080']
@@ -245,6 +245,7 @@ def get_vulnerabilities_point_and_bar() -> str:
         data=source, hconcat=[points, bars], center=True,
         title="Last 10 vulnerabilities in CVE"
     ).to_json()
+
 
 """
 Machine Learning

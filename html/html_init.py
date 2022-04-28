@@ -109,11 +109,15 @@ Graph pages
 """
 
 
-@app.route('/vulnerabilidades')
-@login_required
-def vulnerabilidades(loginout_value='Logout', loginout_url_value='logout'):
-    return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerabilities_point_and_bar(),
+@app.route('/vulnerabilidadesPlotted', methods=["GET", "POST"])
+def vulnerabilidades_plotted(loginout_value='Logout', loginout_url_value='logout'):
+    num = int(request.args.get('number', default=10, type=int))
+    return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerabilities_point_and_bar(num),
                            loginout=loginout_value, loginouturl=loginout_url_value)
+
+@app.route('/vulnerabilidades')
+def vulnerabilidades(loginout_value='Logout', loginout_url_value='logout'):
+    return render_template('vulnerabilidadesSelect.html', loginout=loginout_value, loginouturl=loginout_url_value)
 
 
 @app.route('/usuariosCriticos')
@@ -122,12 +126,11 @@ def usuarios_criticos(loginout_value='Logout', loginout_url_value='logout'):
     return render_template('usuariosCriticosSelect.html', loginout=loginout_value, loginouturl=loginout_url_value)
 
 
-@app.route('/usuariosCriticosPlotted/')
+@app.route('/usuariosCriticosPlotted/', methods=["GET", "POST"])
 @login_required
 def usuarios_criticos_c(loginout_value='Logout', loginout_url_value='logout'):
     num = int(request.args.get('number', default=1, type=int))
     cincuenta = str(request.args.get('cincuenta', default="All", type=str))
-    print(cincuenta)
     if cincuenta == "False":
         return render_template('usuariosCriticos.html', graphJSON=plots.get_critic_users_spam(num, False),
                                loginout=loginout_value, loginouturl=loginout_url_value)
