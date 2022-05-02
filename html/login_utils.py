@@ -1,28 +1,33 @@
+import hashlib
+
 from flask_login import UserMixin
 from flask_wtf import FlaskForm
-from werkzeug.security import generate_password_hash, check_password_hash
-from wtforms import validators, StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
+
+"""
+User creation
+"""
 
 
 class User(UserMixin):
-    def __init__(self,id, username, password):
+    def __init__(self, id_param, username, password):
         self.name = username
-        self.id = id
-        self.password = generate_password_hash(password)
+        self.id = id_param
+        self.password = password
 
     def set_password(self, password):
-        self.password = generate_password_hash(password)
+        self.password = hashlib.sha3_512(password.encode('utf-8')).hexdigest()
 
     def check_password(self, password):
-        return check_password_hash(self.password, password)
+        return hashlib.sha3_512(password.encode('utf-8')).hexdigest().strip() == self.password.strip()
 
     def __repr__(self):
         return '<User {}>'.format(self.name)
+
 
 class LoginForm(FlaskForm):
     email = StringField('username', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
     remember_me = BooleanField('Recuérdame')
     submit = SubmitField('Login')
-

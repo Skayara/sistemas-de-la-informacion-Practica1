@@ -1,4 +1,5 @@
 import os
+import sqlite3
 
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import LoginManager, logout_user, current_user, login_user, login_required
@@ -13,28 +14,27 @@ login_manager = LoginManager(app)
 """
 User definition and login methods
 """
-
 # No register system due to context. (Not everyone should have an account in this service)
 
-users = []
-# Disclaimer:
-# Password should not be visible in code.
-user = User(len(users) + 1, 'potatoesAreCool', 'adminSecretPass')
-users.append(user)
+con_users = sqlite3.connect('html/users.db', check_same_thread=False)
 
 
 def get_user(name):
-    for user_registered in users:
-        if user_registered.name == name:
-            return user_registered
+    cur = con_users.cursor()
+    user = cur.execute("SELECT id, username, password from page_users WHERE username='%s'" % name).fetchone()
+    cur.close()
+    if user is not None:
+        return User(user[0], user[1], user[2].strip())
     return None
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    for user_registered in users:
-        if user_registered.id == int(user_id):
-            return user_registered
+    cur = con_users.cursor()
+    user = cur.execute("SELECT id, username, password from page_users WHERE id='%s'" % user_id).fetchone()
+    cur.close()
+    if user is not None:
+        return User(user[0], user[1], user[2].strip())
     return None
 
 
@@ -67,8 +67,6 @@ def login_check(loginout_value='Login', loginout_url_value='login'):
                 next_page = url_for('index')
             return redirect(next_page)
         return render_template('login.html', user="potatoesAreCool", passwd="adminSecretPass",
-                               not_a_flag="Q2xpY2sgcGFyYSBnYW5hciB1biBpUGhvbmUuIFBvbmVyIGxhIG1pc21hIGNvbnRyYXNl8WEgcGF"
-                                          + "yYSB0b2RvcyBsb3MgYXJjaGl2b3Mgbm8gZXMgdW5hIGJ1ZW5hIGlkZWEu",
                                form=form, loginout=loginout_value, loginouturl=loginout_url_value)
 
 
@@ -80,12 +78,10 @@ def login(bad=0, loginout_value='Login', loginout_url_value='login'):
         return redirect(url_for('index', loginout=loginout_value, loginouturl=loginout_url_value))
     form = LoginForm()
     if bad is None or bad != 1:
-        return render_template('login.html', user="Name", passwd="Pass", not_a_flag=" ", form=form,
+        return render_template('login.html', user="Name", passwd="Pass", form=form,
                                loginout=loginout_value, loginouturl=loginout_url_value)
     else:
         return render_template('login.html', user="potatoesAreCool", passwd="adminSecretPass",
-                               not_a_flag="Q2xpY2sgcGFyYSBnYW5hciB1biBpUGhvbmUuIFBvbmVyIGxhIG1pc21hIGNvbnRyY" +
-                                          "XNl8WEgcGFyYSB0b2RvcyBsb3MgYXJjaGl2b3Mgbm8gZXMgdW5hIGJ1ZW5hIGlkZWEu",
                                form=form, loginout=loginout_value, loginouturl=loginout_url_value)
 
 
@@ -115,6 +111,7 @@ def vulnerabilidades_plotted(loginout_value='Logout', loginout_url_value='logout
     num = int(request.args.get('number', default=10, type=int))
     return render_template('vulnerabilidades.html', graphJSON=plots.get_vulnerabilities_point_and_bar(num),
                            loginout=loginout_value, loginouturl=loginout_url_value)
+
 
 @app.route('/vulnerabilidades')
 @login_required
