@@ -16,7 +16,7 @@ User definition and login methods
 """
 # No register system due to context. (Not everyone should have an account in this service)
 
-con_users = sqlite3.connect('html/users.db', check_same_thread=False)
+con_users = sqlite3.connect(os.getcwd()+'/html/users.db'.replace('/', '\\'), check_same_thread=False)
 
 
 def get_user(name):

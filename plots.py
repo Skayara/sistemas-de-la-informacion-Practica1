@@ -1,4 +1,5 @@
 import hashlib
+import os
 import sqlite3
 from typing import List
 
@@ -6,7 +7,7 @@ import altair as alt
 import pandas as pd
 import requests as requests
 
-con = sqlite3.connect('resources/practicaSI.db', check_same_thread=False)
+con = sqlite3.connect(os.getcwd() +'/resources/practicaSI.db'.replace('/', '\\'), check_same_thread=False)
 cur = con.cursor()
 
 """

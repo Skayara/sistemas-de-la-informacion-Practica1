@@ -1,4 +1,5 @@
 import json
+import os
 from subprocess import call
 
 import graphviz
@@ -17,7 +18,7 @@ Machine Learning
 """
 Load Data
 """
-user_JSON = open("resources/json/users_IA_clases.json", "r")
+user_JSON = open(os.getcwd()+"/resources/json/users_IA_clases.json".replace('/', '\\'), "r")
 user_info = json.load(user_JSON)
 
 usuario = []
@@ -73,16 +74,16 @@ clf = tree.DecisionTreeClassifier()
 clf = clf.fit(user_X_train, user_Y_train)
 
 # Print plot
-dot_data = tree.export_graphviz(clf, out_file=None)
+dot_data = tree.export_graphviz(clf)
 graph = graphviz.Source(dot_data)
-graph.render("Usuarios Criticos")
-dot_data = tree.export_graphviz(clf, out_file=None,
+graph.render("machine_learning/tree_graph_render")
+dot_data = tree.export_graphviz(clf,
                                 feature_names=['email click'],
                                 class_names=['No vulnerable', 'Vulnerable'],
                                 filled=True, rounded=True,
                                 special_characters=True)
 graph = graphviz.Source(dot_data)
-graph.render('test.gv', view=True).replace('\\', '/')
+graph.render('machine_learning/tree.gv', view=True).replace('\\', '/')
 
 """
 Random forest
@@ -90,19 +91,17 @@ Random forest
 
 clf = RandomForestClassifier(max_depth=5, random_state=0, n_estimators=10)
 clf.fit(user_X_train.values.ravel().reshape(-1, 1), user_Y_train.values.ravel())
-print(user_Y_train.values.ravel())
-print(user_X_train.values.ravel().reshape(-1, 1))
 
 for i in range(len(clf.estimators_)):
     print(i)
     estimator = clf.estimators_[i]
     export_graphviz(estimator,
-                    out_file='./treeDir/tree.dot',
+                    out_file='machine_learning/random_forest/random_forest.dot',
                     feature_names=['email click'],
                     class_names=['No vulnerable', 'Vulnerable'],
                     rounded=True, proportion=False,
                     precision=2, filled=True)
-    call(['dot', '-Tpng', 'C:\\Users\\eilee\\Desktop\\pythonProject\\treeDir\\tree.dot', '-o', 'tree' + str(i) + '.png',
-          '-Gdpi=600'], cwd='C:\\Users\\eilee\\Desktop\\pythonProject\\treeDir\\', shell=True)
+    call(['dot', '-Tpng', os.getcwd()+'/machine_learning/random_forest/random_forest.dot'.replace('/', '\\'), '-o', os.getcwd()+'/machine_learning/random_forest/random_forest_tree_'.replace('/', '\\') + str(i) + '.png',
+          '-Gdpi=600'], cwd='machine_learning', shell=True)
 """
 """
