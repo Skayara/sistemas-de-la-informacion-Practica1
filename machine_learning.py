@@ -8,8 +8,9 @@ from matplotlib import pyplot as plt
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.tree import export_graphviz
+import numpy as np
 
 """
 Machine Learning
@@ -57,13 +58,20 @@ print(reg.coef_)
 user_Y_pred = reg.predict(user_X_test)
 
 print("Mean squared error: %.2f" % mean_squared_error(user_Y_test, user_Y_pred))
+# The coefficient of determination: 1 is perfect prediction
+print("Coefficient of determination: %.2f" % r2_score(user_Y_test, user_Y_pred))
+
 
 # Plot outputs
 
 plt.scatter(user_X_test.values.ravel(), user_Y_test, color="black")
-plt.plot(user_X_test.values.ravel(), user_Y_pred, color="blue", linewidth=3)
-plt.xticks(())
-plt.yticks(())
+print("score", r2_score(user_Y_test, user_Y_pred))
+print("intercept", reg.intercept_)
+plt.plot(reg.coef_[0]*np.array(user_X_test.values.ravel())+reg.intercept_, user_X_test.values.ravel(), color="blue", linewidth=3)
+plt.xticks()
+plt.yticks()
+plt.xlabel("Prob_click")
+plt.ylabel("Vulnerable")
 plt.show()
 
 """
@@ -103,5 +111,3 @@ for i in range(len(clf.estimators_)):
                     precision=2, filled=True)
     call(['dot', '-Tpng', os.getcwd()+'/machine_learning/random_forest/random_forest.dot'.replace('/', '\\'), '-o', os.getcwd()+'/machine_learning/random_forest/random_forest_tree_'.replace('/', '\\') + str(i) + '.png',
           '-Gdpi=600'], cwd='machine_learning', shell=True)
-"""
-"""
