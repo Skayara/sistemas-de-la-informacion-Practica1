@@ -96,7 +96,7 @@ def get_critic_users_df():
                                           "permisos"], None)
     usuarios_criticos_df = pd.DataFrame(columns=['nick', 'email_phishing', 'email_click', 'telefono', 'permisos'])
     for i in users_df['passwd'].index:
-        f = open("../resources/smallRockYou.txt", "rt")
+        f = open(os.getcwd() +"/resources/smallRockYou.txt".replace('/', '\\'), "rt")
         for line in f.readlines():
             p = hashlib.md5(line.strip("\n").encode('utf-8')).hexdigest()
             if users_df['passwd'][i] == str(p):

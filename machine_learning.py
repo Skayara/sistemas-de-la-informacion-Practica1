@@ -56,18 +56,26 @@ reg = LinearRegression()
 reg.fit(user_X_train, user_Y_train)
 print(reg.coef_)
 user_Y_pred = reg.predict(user_X_test)
+user_pred = []
 
-print("Mean squared error: %.2f" % mean_squared_error(user_Y_test, user_Y_pred))
+for valor in user_Y_pred:
+    if valor < 0.5:
+        user_pred.append(0)
+    else:
+        user_pred.append(1)
+
+#print("Mean squared error: %.2f" % accuran (user_Y_test, user_pred))
 # The coefficient of determination: 1 is perfect prediction
-print("Coefficient of determination: %.2f" % r2_score(user_Y_test, user_Y_pred))
+print("Coefficient of determination: %.2f" % r2_score(user_Y_test, user_pred))
 
 
 # Plot outputs
 
 plt.scatter(user_X_test.values.ravel(), user_Y_test, color="black")
-print("score", r2_score(user_Y_test, user_Y_pred))
+print("X", user_Y_test)
+print("score", r2_score(user_Y_test, user_pred))
 print("intercept", reg.intercept_)
-plt.plot(reg.coef_[0]*np.array(user_X_test.values.ravel())+reg.intercept_, user_X_test.values.ravel(), color="blue", linewidth=3)
+plt.plot(reg.coef_[0]*np.array(user_X_test.values.ravel())+reg.intercept_, user_pred, color="blue", linewidth=3)
 plt.xticks()
 plt.yticks()
 plt.xlabel("Prob_click")
