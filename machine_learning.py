@@ -88,7 +88,7 @@ Decision tree
 clf = tree.DecisionTreeClassifier()
 clf = clf.fit(user_X_train, user_Y_train)
 
-user_Y_pred = clf.predict(usuario_X_test)  # usuario_X_test = prob_click
+user_Y_pred = clf.predict(usuario_X_test)
 print("Accuracy Decision Tree: %.2f" % accuracy_score(user_Y_test, user_Y_pred))
 
 # Print plot
@@ -110,7 +110,7 @@ Random forest
 clf = RandomForestClassifier(max_depth=5, random_state=0, n_estimators=10)
 clf.fit(user_X_train, user_Y_train)
 
-user_Y_pred = clf.predict(usuario_X_test)  # usuario_X_test = prob_click
+user_Y_pred = clf.predict(usuario_X_test)
 print("Accuracy Random Forest: %.2f" % accuracy_score(user_Y_test, user_Y_pred))
 
 for i in range(len(clf.estimators_)):
