@@ -7,7 +7,7 @@ import altair as alt
 import pandas as pd
 import requests as requests
 
-con = sqlite3.connect(os.getcwd() +'/resources/practicaSI.db'.replace('/', '\\'), check_same_thread=False)
+con = sqlite3.connect(os.getcwd() + '/resources/practicaSI.db'.replace('/', '\\'), check_same_thread=False)
 cur = con.cursor()
 
 """
@@ -63,7 +63,6 @@ def get_vulnerable_pages(number_of_pages: int) -> str:
             lacks_df = pd.concat(
                 [lacks_df, pd.DataFrame([[url, 'proteccion_datos', 1, policies_sum, year]],
                                         columns=['url', 'Lacks', 'value', 'policies_sum', 'year'])])
-    # source = lacks_df.head(min(number_of_pages, lacks_df.shape[0]))
     source = lacks_df
     domain = ['cookies', 'aviso', 'proteccion_datos']
     range_ = ['#afdedc', '#3e797b', '#e8e597']
@@ -96,7 +95,7 @@ def get_critic_users_df():
                                           "permisos"], None)
     usuarios_criticos_df = pd.DataFrame(columns=['nick', 'email_phishing', 'email_click', 'telefono', 'permisos'])
     for i in users_df['passwd'].index:
-        f = open(os.getcwd() +"/resources/smallRockYou.txt".replace('/', '\\'), "rt")
+        f = open(os.getcwd() + "/resources/smallRockYou.txt".replace('/', '\\'), "rt")
         for line in f.readlines():
             p = hashlib.md5(line.strip("\n").encode('utf-8')).hexdigest()
             if users_df['passwd'][i] == str(p):
@@ -117,7 +116,6 @@ def get_critic_users(number_of_users: int) -> str:
     table_size = cur.execute("SELECT count(nick) FROM users").fetchone()[0]
     number_of_users = min(table_size, number_of_users)
     usuarios_criticos_df = get_critic_users_df()
-    print(usuarios_criticos_df.columns)
     usuarios_criticos_df.sort_values(by=['prob_click'], ascending=False, inplace=True)
     source = usuarios_criticos_df.head(min(number_of_users, usuarios_criticos_df.shape[0]))
     brush = alt.selection(type='interval', encodings=['x'])
@@ -150,7 +148,6 @@ def get_critic_users_spam(number_of_users: int, cincuenta: bool) -> str:
     else:
         usuarios_criticos_df = usuarios_criticos_df[usuarios_criticos_df['prob_click'] < 0.5]
     usuarios_criticos_df.sort_values(by=['prob_click'], ascending=False, inplace=True)
-    print(usuarios_criticos_df.columns)
     source = usuarios_criticos_df.head(min(number_of_users, usuarios_criticos_df.shape[0]))
     brush = alt.selection(type='interval', encodings=['x'])
     chart = alt.Chart(source).mark_bar(cornerRadiusTopLeft=3,
@@ -161,14 +158,12 @@ def get_critic_users_spam(number_of_users: int, cincuenta: bool) -> str:
     ).add_selection(
         brush
     )
-
     line = alt.Chart().mark_rule(color='#3e797b').encode(
         y='mean(prob_click):Q',
         size=alt.SizeValue(3)
     ).transform_filter(
         brush
     )
-
     return alt.layer(chart, line, data=source).properties(
         width='container',
         height=400
@@ -221,4 +216,3 @@ def get_vulnerabilities_point_and_bar(number_of_vuln: int) -> str:
         data=source, hconcat=[points, bars], center=True,
         title="Last 10 vulnerabilities in CVE"
     ).to_json()
-
