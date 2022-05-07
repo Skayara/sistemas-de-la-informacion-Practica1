@@ -1,13 +1,18 @@
 import hashlib
 import os
 import sqlite3
+from sys import platform
 from typing import List
 
 import altair as alt
 import pandas as pd
 import requests as requests
+from pandas import DataFrame
 
-con = sqlite3.connect(os.getcwd() + '/resources/practicaSI.db'.replace('/', '\\'), check_same_thread=False)
+db_route = os.getcwd() + '/resources/practicaSI.db'
+if platform == 'win32':
+    db_route = db_route.replace('/', '\\')
+con = sqlite3.connect(db_route, check_same_thread=False)
 cur = con.cursor()
 
 """
@@ -43,12 +48,13 @@ Plot generation functions
 
 
 def get_vulnerable_pages(number_of_pages: int) -> str:
-    table_size = cur.execute("SELECT count(url) FROM legal").fetchone()[0]
-    number_of_pages = min(table_size, number_of_pages)
-    legal_politicas_df = create_dataframe("legal",
-                                          ["url", "cookies", "aviso", "proteccion_datos", "policies_sum", "creacion"],
-                                          "ORDER BY policies_sum ASC LIMIT " + str(number_of_pages))
-    lacks_df = pd.DataFrame(columns=['url', 'Lacks', 'value', 'policies_sum', 'year'])
+    table_size: int = cur.execute("SELECT count(url) FROM legal").fetchone()[0]
+    number_of_pages: int = min(table_size, number_of_pages)
+    legal_politicas_df: DataFrame = create_dataframe("legal",
+                                                     ["url", "cookies", "aviso", "proteccion_datos", "policies_sum",
+                                                      "creacion"],
+                                                     "ORDER BY policies_sum ASC LIMIT " + str(number_of_pages))
+    lacks_df: DataFrame = pd.DataFrame(columns=['url', 'Lacks', 'value', 'policies_sum', 'year'])
     for index in legal_politicas_df['url'].index:
         url = legal_politicas_df['url'][index]
         year = legal_politicas_df['creacion'][index]
@@ -66,7 +72,6 @@ def get_vulnerable_pages(number_of_pages: int) -> str:
     source = lacks_df
     domain = ['cookies', 'aviso', 'proteccion_datos']
     range_ = ['#afdedc', '#3e797b', '#e8e597']
-    print(lacks_df.columns)
     selection = alt.selection_multi(fields=['Lacks'], bind='legend')
     chart = alt.Chart(source
                       ).mark_bar(cornerRadiusTopLeft=3, cornerRadiusTopRight=3).encode(
@@ -95,7 +100,10 @@ def get_critic_users_df():
                                           "permisos"], None)
     usuarios_criticos_df = pd.DataFrame(columns=['nick', 'email_phishing', 'email_click', 'telefono', 'permisos'])
     for i in users_df['passwd'].index:
-        f = open(os.getcwd() + "/resources/smallRockYou.txt".replace('/', '\\'), "rt")
+        ry_route = os.getcwd() + '/resources/smallRockYou.txt'
+        if platform == 'win32':
+            ry_route = ry_route.replace('/', '\\')
+        f = open(ry_route, "rt")
         for line in f.readlines():
             p = hashlib.md5(line.strip("\n").encode('utf-8')).hexdigest()
             if users_df['passwd'][i] == str(p):

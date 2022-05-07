@@ -1,6 +1,7 @@
 import json
 import os
 from subprocess import call
+from sys import platform
 
 import graphviz
 import numpy as np
@@ -19,7 +20,11 @@ Machine Learning
 """
 Load Data
 """
-user_JSON = open(os.getcwd() + "/resources/json/users_IA_clases.json".replace('/', '\\'), "r")
+
+json_route = os.getcwd() + '/resources/json/users_IA_clases.json'
+if platform == 'win32':
+    json_route = json_route.replace('/', '\\')
+user_JSON = open(json_route, "r")
 user_info = json.load(user_JSON)
 
 emails_click = []
@@ -101,7 +106,10 @@ dot_data = tree.export_graphviz(clf,
                                 filled=True, rounded=True,
                                 special_characters=True)
 graph = graphviz.Source(dot_data)
-graph.render('machine_learning/tree.gv', view=True).replace('\\', '/')
+tree_route = os.getcwd() + 'machine_learning/tree.gv'
+if platform == 'win32':
+    tree_route = tree_route.replace('/', '\\')
+graph.render(tree_route, view=True)
 
 """
 Random forest
@@ -122,6 +130,9 @@ for i in range(len(clf.estimators_)):
                     class_names=['No vulnerable', 'Vulnerable'],
                     rounded=True, proportion=False,
                     precision=2, filled=True)
-    call(['dot', '-Tpng', os.getcwd() + '/machine_learning/random_forest/random_forest.dot'.replace('/', '\\'), '-o',
-          os.getcwd() + '/machine_learning/random_forest/random_forest_tree_'.replace('/', '\\') + str(i) + '.png',
+    rf_route = os.getcwd() + '/machine_learning/random_forest/'
+    if platform == 'win32':
+        rf_route = rf_route.replace('/', '\\')
+    call(['dot', '-Tpng', rf_route + 'random_forest.dot'.replace('/', '\\'), '-o',
+          rf_route + 'random_forest_tree_'.replace('/', '\\') + str(i) + '.png',
           '-Gdpi=600'], cwd='machine_learning', shell=True)
