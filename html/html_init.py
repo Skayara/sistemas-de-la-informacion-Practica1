@@ -27,7 +27,7 @@ def get_user(name):
     user = cur.execute("SELECT id, username, password from page_users WHERE username='%s'" % name).fetchone()
     cur.close()
     if user is not None:
-        return User(user[0], user[1], user[2].strip())
+        return User(user[0], user[1], user[2])
     return None
 
 
@@ -37,7 +37,7 @@ def load_user(user_id):
     user = cur.execute("SELECT id, username, password from page_users WHERE id='%s'" % user_id).fetchone()
     cur.close()
     if user is not None:
-        return User(user[0], user[1], user[2].strip())
+        return User(user[0], user[1], user[2])
     return None
 
 
